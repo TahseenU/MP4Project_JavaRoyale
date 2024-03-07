@@ -18,6 +18,7 @@ public class Game {
     private int y2;
     private boolean[] keysPressed;
     private Timer timer;
+    private Timer fps;
 
     public Game() {
         x1 = 100;
@@ -28,7 +29,7 @@ public class Game {
         p1 = new JPanel();
         p2 = new JPanel();
         panel = new JPanel();
-        panel.setBounds(0, 0, 1350, 700);
+        panel.setBounds(0, 0, 1350, 739);
         p1.setBounds(100, 100, 50, 50);
         p2.setBounds(1200, 550, 50, 50);
         panel.setBackground(new Color(50, 200, 100));
@@ -41,8 +42,9 @@ public class Game {
         frame.getContentPane().add(panel);
 
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setBounds(10, 10, 1350, 700);
+        frame.setBounds(0, 0, 1350, 739);
         frame.setVisible(true);
+        animate ();
 
         keysPressed = new boolean[KeyEvent.KEY_LAST + 1];
         for (int i = 0; i < keysPressed.length; i++) {
@@ -75,22 +77,32 @@ public class Game {
             @Override
             public void actionPerformed(ActionEvent e) {
                 movePlayers();
-                p1.setLocation (x1, y1);
-                p2.setLocation (x2, y2);
             }
         });
         timer.start();
     }
 
-    private void movePlayers() {
-        if (keysPressed[KeyEvent.VK_W]) y1--;
-        if (keysPressed[KeyEvent.VK_A]) x1--;
-        if (keysPressed[KeyEvent.VK_S]) y1++;
-        if (keysPressed[KeyEvent.VK_D]) x1++;
+    private void animate(){
+        fps = new Timer (10, new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e){
+                p1.setLocation (x1, y1);
+                p2.setLocation (x2, y2);
+            }
+        });
+        fps.start ();
+    }
 
-        if (keysPressed[KeyEvent.VK_UP]) y2--;
-        if (keysPressed[KeyEvent.VK_LEFT]) x2--;
-        if (keysPressed[KeyEvent.VK_DOWN]) y2++;
-        if (keysPressed[KeyEvent.VK_RIGHT]) x2++;
+
+    private void movePlayers() {
+        if (keysPressed[KeyEvent.VK_W]) if (!(y1 <= 0)) y1--;
+        if (keysPressed[KeyEvent.VK_A]) if (!(x1 <= 0))x1--;
+        if (keysPressed[KeyEvent.VK_S]) if (!(y1 >= 650)) y1++;
+        if (keysPressed[KeyEvent.VK_D]) if (!(x1 >= 1284)) x1++;
+
+        if (keysPressed[KeyEvent.VK_UP]) if (!(y2 <= 0)) y2--;
+        if (keysPressed[KeyEvent.VK_LEFT]) if (!(x2 <= 0)) x2--;
+        if (keysPressed[KeyEvent.VK_DOWN]) if (!(y2 >= 650)) y2++;
+        if (keysPressed[KeyEvent.VK_RIGHT]) if (!(x2 >= 1284)) x2++;
     }
 }
