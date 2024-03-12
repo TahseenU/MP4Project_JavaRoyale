@@ -17,14 +17,15 @@ public class Game {
     private int x2;
     private int y2;
     private boolean[] keysPressed;
-    private Timer timer;
     private Timer fps;
+    private int wait;
 
     public Game() {
         x1 = 100;
         y1 = 100;
         x2 = 1200;
         y2 = 550;
+        wait = 0;
         frame = new JFrame();
         p1 = new JPanel();
         p2 = new JPanel();
@@ -44,9 +45,8 @@ public class Game {
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setBounds(0, 0, 1350, 739);
         frame.setVisible(true);
-        animate ();
 
-        keysPressed = new boolean[KeyEvent.KEY_LAST + 1];
+        keysPressed = new boolean[KeyEvent.KEY_LAST];
         for (int i = 0; i < keysPressed.length; i++) {
             keysPressed[i] = false;
         }
@@ -55,14 +55,14 @@ public class Game {
             @Override
             public void keyPressed(KeyEvent e) {
                 keysPressed[e.getKeyCode()] = true;
-                startTimer ();
+                animate ();
             }
 
             @Override
             public void keyReleased(KeyEvent e) {
                 keysPressed[e.getKeyCode()] = false;
-                timer.stop ();
-                timer = null;
+                fps.stop ();
+                fps = null;
             }
 
             @Override
@@ -72,22 +72,16 @@ public class Game {
         });
     }
 
-    private void startTimer() {
-        timer = new Timer(100, new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                movePlayers();
-            }
-        });
-        timer.start();
-    }
-
     private void animate(){
-        fps = new Timer (10, new ActionListener() {
+        fps = new Timer (16, new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e){
+                if (wait % 10 == 0) movePlayers ();
                 p1.setLocation (x1, y1);
                 p2.setLocation (x2, y2);
+                p1.repaint ();
+                p2.repaint ();
+                wait++;
             }
         });
         fps.start ();
