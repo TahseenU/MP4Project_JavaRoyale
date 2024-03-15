@@ -19,11 +19,15 @@ public class Game extends JPanel implements KeyListener {
     private double p1Health;
     private double p2Health;
     private int damage;
+    private long start;
+    private int wait;
 
     public Game() {
+        start = System.currentTimeMillis ();
+        wait = 0;
         p1Health = 100;
         p2Health = 100;
-        damage = 10;
+        damage = 15;
         speed = 5;
         pSpeed = 10;
         cooldown = 200;
@@ -40,14 +44,29 @@ public class Game extends JPanel implements KeyListener {
         Timer timer = new Timer(10, new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                p1Health += 0.005;
-                p2Health += 0.005;
+                p1Health += 0.01;
+                p2Health += 0.01;
                 movePlayers();     
                 movePellets();
                 repaint();
+                int fps = (int) (1000 / (System.currentTimeMillis () - start));
+                if (wait % 100 == 0) System.out.println(fps + " FPS");
+                start = System.currentTimeMillis();
+                wait++;
             }
         });
         timer.start();
+
+        Timer health = new Timer (1000, new ActionListener (){
+            @Override
+            public void actionPerformed (ActionEvent e){
+                System.out.println (p1Health + " " + p2Health);
+                
+            }
+        });
+        health.start ();
+
+        
     }
 
     private void movePlayers() {
@@ -111,6 +130,10 @@ public class Game extends JPanel implements KeyListener {
         g2d.fillRect(x1, y1, 50, 50);
         g2d.setColor(Color.RED);
         g2d.fillRect(x2, y2, 50, 50);
+        g2d.fillRect (x1 + 3, y1 - 10, (int) p1Health / 2, 5);
+        g2d.setColor(Color.WHITE);
+        g2d.fillRect (x1, y1 - 15, 56, 15);
+        g2d.fillRect (x2, y2 - 15, 56, 15);
         for (Pellet pellet : pellets) {
             if (pellet.getTarget () == 2) g2d.setColor (Color.BLUE);
             else g2d.setColor (Color.RED);
