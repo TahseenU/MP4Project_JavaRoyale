@@ -1,14 +1,17 @@
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.SwingConstants;
 import javax.swing.Timer;
 import java.util.ArrayList;
 
@@ -24,14 +27,17 @@ public class Game extends JPanel implements KeyListener {
     private long cd2;
     private boolean[] keysPressed;
     private ArrayList<Pellet> pellets = new ArrayList<>();
-    public static Timer timer;
+    private Timer timer;
     private double p1Health;
     private double p2Health;
     private int damage;
     private long start;
     private int wait;
+    private boolean won;
+    private boolean playing;
 
-    public Game() {
+    public Game (){
+        won = false;
         start = System.currentTimeMillis ();
         wait = 0;
         p1Health = 100;
@@ -49,7 +55,78 @@ public class Game extends JPanel implements KeyListener {
         setBackground(new Color(50, 200, 100));
         setFocusable(true);
         addKeyListener(this);
+        intro ();
+    }
 
+    public void intro (){
+        removeAll ();
+        JLabel intro = new JLabel ("Java Royale");
+        intro.setFont (new Font ("Verdana", Font.BOLD, 70));
+        intro.setBounds (450, 175, 700, 100);
+        intro.setForeground (Color.RED);
+        setLayout (null);
+        add (intro);
+
+        JButton start = new JButton ("PLAY");
+        start.setForeground (Color.BLUE);
+        start.setBounds (600, 400, 140, 30);
+        start.setBackground (Color.GRAY);
+        start.setFont (new Font ("Verdana", Font.BOLD, 16));
+        start.addActionListener (new ActionListener (){
+            @Override
+            public void actionPerformed (ActionEvent e){
+                play ();
+            }
+        });
+        add (start);
+
+        JButton controls = new JButton ("CONTROLS");
+        controls.setForeground (Color.BLUE);
+        controls.setBounds (600, 460, 140, 30);
+        controls.setBackground (Color.GRAY);
+        controls.setFont (new Font ("Verdana", Font.BOLD, 16));
+        controls.addActionListener (new ActionListener (){
+            @Override
+            public void actionPerformed (ActionEvent e){
+                showControls ();
+            }
+        });
+        add (controls);
+    }
+
+    public void showControls (){
+        removeAll ();
+        setBackground (Color.GRAY);
+        JLabel ctrl = new JLabel ("CONTROLS");
+        add (ctrl);
+
+        JLabel p1 = new JLabel ("Player 1:");
+        p1.setForeground (Color.BLUE);
+        p1.setBounds (200, 50, 150, 50);
+        p1.setFont (new Font ("Verdana", Font.BOLD, 30));
+        add (p1);
+
+        JLabel p2 = new JLabel ("Player 2:");
+        p2.setForeground (Color.RED);
+        p2.setBounds (850, 50, 150, 50);
+        p2.setFont (new Font ("Verdana", Font.BOLD, 30));
+        add (p2);
+
+        JLabel[] controls1 = new JLabel[5];
+        
+        for (JLabel c : controls1){
+            controls1[0].setText ("UP - W");
+            c.setForeground (Color.BLUE);
+            c.setBounds (250, 200, 200, 500);
+            c.setFont (new Font ("Verdana", Font.BOLD, 20));
+            add (c);
+        }
+        
+    }
+
+    public void play (){
+        removeAll ();
+        playing = true;
         timer = new Timer(10, new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -63,7 +140,7 @@ public class Game extends JPanel implements KeyListener {
                 start = System.currentTimeMillis();
                 wait++;
                 if (p1Health <= 0){
-                    if (p2Health <= 0) win (2);
+                    if (p2Health <= 0) win (0);
                     else win (2);
                 }
                 else if (p2Health <= 0) win (1);
@@ -115,36 +192,36 @@ public class Game extends JPanel implements KeyListener {
                             pellets.remove (i);
                             if (pellet.getTarget () == 2) p2Health -= damage;
                             else p1Health -= damage;
-                            if (p1Health <= 0 || p2Health <= 0) setVisible (false);
                             i--;
                         }
                     }
                 }
             }
-            
         }
     }
 
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
-        Graphics2D g2d = (Graphics2D) g.create();
-        g2d.setColor(Color.BLUE);
-        g2d.fillRect(x1, y1, 50, 50);
-        g2d.setColor(Color.RED);
-        g2d.fillRect(x2, y2, 50, 50);
-        g2d.setColor(Color.WHITE);
-        g2d.fillRect (x1, y1 - 9, 54, 9);
-        g2d.fillRect (x2, y2 - 9, 54, 9);
-        g2d.setColor (Color.RED);
-        g2d.fillRect (x1 + 2, y1 - 7, (int) (p1Health / 2), 5);
-        g2d.fillRect (x2 + 2, y2 - 7, (int) (p2Health / 2), 5);
-        for (Pellet pellet : pellets) {
-            if (pellet.getTarget () == 2) g2d.setColor (Color.BLUE);
-            else g2d.setColor (Color.RED);
-            g2d.fillRect((int) pellet.getX(), (int) pellet.getY(), 5, 5);
+        if (!(won) && playing) {
+            Graphics2D g2d = (Graphics2D) g.create();
+            g2d.setColor(Color.BLUE);
+            g2d.fillRect(x1, y1, 50, 50);
+            g2d.setColor(Color.RED);
+            g2d.fillRect(x2, y2, 50, 50);
+            g2d.setColor(Color.WHITE);
+            g2d.fillRect(x1, y1 - 9, 54, 9);
+            g2d.fillRect(x2, y2 - 9, 54, 9);
+            g2d.setColor(Color.RED);
+            g2d.fillRect(x1 + 2, y1 - 7, (int) (p1Health / 2), 5);
+            g2d.fillRect(x2 + 2, y2 - 7, (int) (p2Health / 2), 5);
+            for (Pellet pellet : pellets) {
+                if (pellet.getTarget() == 2) g2d.setColor(Color.BLUE);
+                else g2d.setColor(Color.RED);
+                g2d.fillRect((int) pellet.getX(), (int) pellet.getY(), 5, 5);
+            }
+            g2d.dispose();
         }
-        g2d.dispose();
     }
 
     @Override
@@ -171,17 +248,33 @@ public class Game extends JPanel implements KeyListener {
     }
 
     @Override
-    public void keyTyped(KeyEvent e){}
+    public void keyTyped (KeyEvent e){}
 
-    public void win (int winner){
-        //timer.stop ();
+    public void win (int winner) {
+        timer.stop();
+        won = true;
         String cong = "";
+        Color color = Color.BLACK;
         switch (winner){
-            case 0: cong = "DRAW";
-            case 1: cong = "BLUE WINS!";
-            case 2: cong = "RED WINS!";
+            case 0:
+                cong = "DRAW";
+                break;
+            case 1:
+                cong = "BLUE WINS!";
+                color = Color.BLUE;
+                break;
+            case 2:
+                cong = "RED WINS!";
+                color = Color.RED;
+                break;
         }
-        add (new JLabel (cong));
-        setBackground (new Color (50, 200, 100));
-    }
+        JLabel winnerLabel = new JLabel (cong);
+        winnerLabel.setFont (new Font ("Arial", Font.BOLD, 50));
+        winnerLabel.setForeground (color);
+        setLayout (null);
+        winnerLabel.setBounds (535, 325, 300, 50);
+        add (winnerLabel);
+        revalidate ();
+        repaint ();
+    }    
 }
