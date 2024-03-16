@@ -1,12 +1,20 @@
-import javax.swing.*;
-import java.awt.*;
-import java.awt.event.*;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.Timer;
 import java.util.ArrayList;
 
 public class Game extends JPanel implements KeyListener {
     private int speed;
     private int pSpeed;
-
     private int x1;
     private int y1;
     private int x2;
@@ -16,6 +24,7 @@ public class Game extends JPanel implements KeyListener {
     private long cd2;
     private boolean[] keysPressed;
     private ArrayList<Pellet> pellets = new ArrayList<>();
+    public static Timer timer;
     private double p1Health;
     private double p2Health;
     private int damage;
@@ -27,9 +36,9 @@ public class Game extends JPanel implements KeyListener {
         wait = 0;
         p1Health = 100;
         p2Health = 100;
-        damage = 15;
+        damage = 10;
         speed = 5;
-        pSpeed = 10;
+        pSpeed = 11;
         cooldown = 200;
         x1 = 100;
         y1 = 100;
@@ -41,11 +50,11 @@ public class Game extends JPanel implements KeyListener {
         setFocusable(true);
         addKeyListener(this);
 
-        Timer timer = new Timer(10, new ActionListener() {
+        timer = new Timer(10, new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                p1Health += 0.01;
-                p2Health += 0.01;
+                if (p1Health < 100) p1Health += 0.01;
+                if (p2Health < 100) p2Health += 0.01;
                 movePlayers();     
                 movePellets();
                 repaint();
@@ -53,20 +62,14 @@ public class Game extends JPanel implements KeyListener {
                 if (wait % 100 == 0) System.out.println(fps + " FPS");
                 start = System.currentTimeMillis();
                 wait++;
+                if (p1Health <= 0){
+                    if (p2Health <= 0) win (2);
+                    else win (2);
+                }
+                else if (p2Health <= 0) win (1);
             }
         });
-        timer.start();
-
-        Timer health = new Timer (1000, new ActionListener (){
-            @Override
-            public void actionPerformed (ActionEvent e){
-                System.out.println (p1Health + " " + p2Health);
-                
-            }
-        });
-        health.start ();
-
-        
+        timer.start();   
     }
 
     private void movePlayers() {
@@ -96,10 +99,10 @@ public class Game extends JPanel implements KeyListener {
             }
             pellet.move();
 
-            int[] xTargets = new int [53];
-            int[] yTargets = new int [53];
-            for (int j = 0; j < xTargets.length; j++) xTargets[j] = j + xTar - 2;
-            for (int j = 0; j < yTargets.length; j++) yTargets[j] = j + yTar - 2;
+            int[] xTargets = new int [55];
+            int[] yTargets = new int [55];
+            for (int j = 0; j < xTargets.length; j++) xTargets[j] = j + xTar - 4;
+            for (int j = 0; j < yTargets.length; j++) yTargets[j] = j + yTar - 4;
 
             if (pellet.getX() < 0 || pellet.getX() >= getWidth() || pellet.getY() < 0 || pellet.getY() >= getHeight()) {
                 pellets.remove(i);
@@ -130,10 +133,12 @@ public class Game extends JPanel implements KeyListener {
         g2d.fillRect(x1, y1, 50, 50);
         g2d.setColor(Color.RED);
         g2d.fillRect(x2, y2, 50, 50);
-        g2d.fillRect (x1 + 3, y1 - 10, (int) p1Health / 2, 5);
         g2d.setColor(Color.WHITE);
-        g2d.fillRect (x1, y1 - 15, 56, 15);
-        g2d.fillRect (x2, y2 - 15, 56, 15);
+        g2d.fillRect (x1, y1 - 9, 54, 9);
+        g2d.fillRect (x2, y2 - 9, 54, 9);
+        g2d.setColor (Color.RED);
+        g2d.fillRect (x1 + 2, y1 - 7, (int) (p1Health / 2), 5);
+        g2d.fillRect (x2 + 2, y2 - 7, (int) (p2Health / 2), 5);
         for (Pellet pellet : pellets) {
             if (pellet.getTarget () == 2) g2d.setColor (Color.BLUE);
             else g2d.setColor (Color.RED);
@@ -161,10 +166,22 @@ public class Game extends JPanel implements KeyListener {
     }
 
     @Override
-    public void keyReleased(KeyEvent e) {
+    public void keyReleased(KeyEvent e){
         keysPressed[e.getKeyCode()] = false;
     }
 
     @Override
-    public void keyTyped(KeyEvent e) {}
+    public void keyTyped(KeyEvent e){}
+
+    public void win (int winner){
+        //timer.stop ();
+        String cong = "";
+        switch (winner){
+            case 0: cong = "DRAW";
+            case 1: cong = "BLUE WINS!";
+            case 2: cong = "RED WINS!";
+        }
+        add (new JLabel (cong));
+        setBackground (new Color (50, 200, 100));
+    }
 }
