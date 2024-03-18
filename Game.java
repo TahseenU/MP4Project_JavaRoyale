@@ -60,6 +60,7 @@ public class Game extends JPanel implements KeyListener {
 
     public void intro (){
         removeAll ();
+        setBackground (new Color (50, 200, 100));
         JLabel intro = new JLabel ("Java Royale");
         intro.setFont (new Font ("Verdana", Font.BOLD, 70));
         intro.setBounds (450, 175, 700, 100);
@@ -113,15 +114,49 @@ public class Game extends JPanel implements KeyListener {
         add (p2);
 
         JLabel[] controls1 = new JLabel[5];
-        
-        for (JLabel c : controls1){
-            controls1[0].setText ("UP - W");
-            c.setForeground (Color.BLUE);
-            c.setBounds (250, 200, 200, 500);
-            c.setFont (new Font ("Verdana", Font.BOLD, 20));
-            add (c);
+        int y = 1;
+        for (int i = 0; i < 5; i++){
+            controls1[i] = new JLabel ();
+            controls1[i].setForeground (Color.BLUE);
+            controls1[i].setBounds (200, 30 + 50 * y, 200, 100);
+            controls1[i].setFont (new Font ("Verdana", Font.BOLD, 20));
+            add (controls1[i]);
+            y++;
         }
-        
+        controls1[0].setText ("UP - W");
+        controls1[1].setText ("DOWN - S");
+        controls1[2].setText ("LEFT - A");
+        controls1[3].setText ("RIGHT - D");
+        controls1[4].setText ("SHOOT - X");
+
+        JLabel[] controls2 = new JLabel[5];
+        y = 1;
+        for (int i = 0; i < 5; i++){
+            controls2[i] = new JLabel ();
+            controls2[i].setForeground (Color.RED);
+            controls2[i].setBounds (850, 25 + 50 * y, 300, 100);
+            controls2[i].setFont (new Font ("Verdana", Font.BOLD, 20));
+            add (controls2[i]);
+            y++;
+        }
+        controls2[0].setText ("UP - UP ARROW");
+        controls2[1].setText ("DOWN - DOWN ARROW");
+        controls2[2].setText ("LEFT - LEFT ARROW");
+        controls2[3].setText ("RIGHT - RIGHT ARROW");
+        controls2[4].setText ("SHOOT - ENTER");
+
+        JButton back = new JButton ("BACK");
+        back.setForeground (Color.BLACK);
+        back.setBackground (Color.WHITE);
+        back.setBounds (20, 20, 90, 25);
+        back.setFont (new Font ("Verdana", Font.BOLD, 15));
+        back.addActionListener (new ActionListener (){
+            @Override
+            public void actionPerformed (ActionEvent e){
+                intro ();
+            }
+        });
+        add (back);
     }
 
     public void play (){
