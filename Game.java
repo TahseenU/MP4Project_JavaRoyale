@@ -31,15 +31,12 @@ public class Game extends JPanel implements KeyListener {
     private double p1Health;
     private double p2Health;
     private int damage;
-    private long start;
-    private int wait;
+    private int frameCount;
     private boolean won;
     private boolean playing;
 
     public Game (){
         won = false;
-        start = System.currentTimeMillis ();
-        wait = 0;
         p1Health = 100;
         p2Health = 100;
         damage = 10;
@@ -162,6 +159,17 @@ public class Game extends JPanel implements KeyListener {
     public void play (){
         removeAll ();
         playing = true;
+        frameCount = 0;
+    
+        Timer fpsTimer = new Timer(1000, new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                System.out.println(frameCount + " FPS");
+                frameCount = 0;
+            }
+        });
+        fpsTimer.start();
+    
         timer = new Timer(10, new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -170,10 +178,7 @@ public class Game extends JPanel implements KeyListener {
                 movePlayers();     
                 movePellets();
                 repaint();
-                int fps = (int) (1000 / (System.currentTimeMillis () - start));
-                if (wait % 100 == 0) System.out.println(fps + " FPS");
-                start = System.currentTimeMillis();
-                wait++;
+                frameCount++;
                 if (p1Health <= 0){
                     if (p2Health <= 0) win (0);
                     else win (2);
@@ -182,7 +187,7 @@ public class Game extends JPanel implements KeyListener {
             }
         });
         timer.start();   
-    }
+    }    
 
     private void movePlayers() {
         if (keysPressed[KeyEvent.VK_W]) if (!(y1 <= 0)) y1 -= speed;
