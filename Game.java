@@ -28,12 +28,17 @@ public class Game extends JPanel implements KeyListener {
     private boolean[] keysPressed;
     private ArrayList<Pellet> pellets = new ArrayList<>();
     private Timer timer;
+    private Timer fpsTimer;
     private double p1Health;
     private double p2Health;
     private int damage;
     private int frameCount;
     private boolean won;
     private boolean playing;
+    private int p1Fired;
+    private int p2Fired;
+    private int p1Hit;
+    private int p2Hit;
 
     public Game (){
         won = false;
@@ -73,7 +78,7 @@ public class Game extends JPanel implements KeyListener {
         start.addActionListener (new ActionListener (){
             @Override
             public void actionPerformed (ActionEvent e){
-                play ();
+                difficulty ();
             }
         });
         add (start);
@@ -156,12 +161,69 @@ public class Game extends JPanel implements KeyListener {
         add (back);
     }
 
+    public void difficulty (){
+        removeAll ();
+        setBackground (new Color (50, 200, 100));
+
+        JLabel difficulty = new JLabel ("SELECT DIFFICULTY");
+        difficulty.setForeground (new Color (150, 0, 255));
+        difficulty.setFont (new Font ("Verdana", Font.BOLD, 40));
+        difficulty.setBounds (450, 50, 500, 50);
+        add (difficulty);
+
+        JButton casual = new JButton ("Casual");
+        casual.setBackground (Color.GRAY);
+        casual.setForeground (Color.BLACK);
+        casual.setFont (new Font ("Verdana", Font.BOLD, 20));
+        casual.setBounds (200, 200, 200, 30);
+        casual.addActionListener (new ActionListener (){
+            @Override
+            public void actionPerformed (ActionEvent e){
+                pSpeed = 8;
+                play ();
+            }
+        });
+        add (casual);
+
+        JButton competitive = new JButton ("Competitive");
+        competitive.setBackground (Color.GRAY);
+        competitive.setForeground (Color.BLACK);
+        competitive.setFont (new Font ("Verdana", Font.BOLD, 20));
+        competitive.setBounds (550, 200, 200, 30);
+        competitive.addActionListener (new ActionListener (){
+            @Override
+            public void actionPerformed (ActionEvent e){
+                speed = 6;
+                pSpeed = 11;
+                play ();
+            }
+        });
+        add (competitive);
+
+        JButton pro = new JButton ("Pro");
+        pro.setBackground (Color.GRAY);
+        pro.setForeground (Color.BLACK);
+        pro.setFont (new Font ("Verdana", Font.BOLD, 20));
+        pro.setBounds (850, 200, 200, 30);
+        pro.addActionListener (new ActionListener (){
+            @Override
+            public void actionPerformed (ActionEvent e){
+                speed = 8;
+                pSpeed = 15;
+                play ();
+            }
+        });
+        add (pro);
+
+        repaint ();
+    }
+
     public void play (){
         removeAll ();
         playing = true;
         frameCount = 0;
     
-        Timer fpsTimer = new Timer(1000, new ActionListener() {
+        fpsTimer = new Timer(1000, new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 System.out.println(frameCount + " FPS");
@@ -230,8 +292,14 @@ public class Game extends JPanel implements KeyListener {
                     for (int k = 0; k < yTargets.length; k++){
                         if (xTargets[j] == pellet.getX () && yTargets[k] == pellet.getY ()){
                             pellets.remove (i);
-                            if (pellet.getTarget () == 2) p2Health -= damage;
-                            else p1Health -= damage;
+                            if (pellet.getTarget () == 2){
+                                p2Health -= damage;
+                                p2Hit++;
+                            }
+                            else{
+                                p1Health -= damage;
+                                p1Hit++;
+                            }
                             i--;
                         }
                     }
@@ -270,12 +338,14 @@ public class Game extends JPanel implements KeyListener {
         long time = System.currentTimeMillis ();
         if (e.getKeyCode() == KeyEvent.VK_X) {
             if (time - cd1 >= cooldown){
+                p1Fired++;
                 cd1 = time;
                 pellets.add (new Pellet(x1, y1, x2, y2, 5, pSpeed, 2));
             }
         }
         if (e.getKeyCode() == KeyEvent.VK_ENTER) {
             if (time - cd2 >= cooldown){
+                p2Fired++;
                 cd2 = time;
                 pellets.add (new Pellet(x2, y2, x1, y1, 5, pSpeed, 1));
             }
@@ -292,6 +362,7 @@ public class Game extends JPanel implements KeyListener {
 
     public void win (int winner) {
         timer.stop();
+        fpsTimer.stop ();
         won = true;
         String cong = "";
         Color color = Color.BLACK;
@@ -309,11 +380,38 @@ public class Game extends JPanel implements KeyListener {
                 break;
         }
         JLabel winnerLabel = new JLabel (cong);
-        winnerLabel.setFont (new Font ("Arial", Font.BOLD, 50));
+        winnerLabel.setFont (new Font ("Verdana", Font.BOLD, 50));
         winnerLabel.setForeground (color);
         setLayout (null);
-        winnerLabel.setBounds (535, 325, 300, 50);
+        winnerLabel.setBounds (520, 300, 350, 50);
         add (winnerLabel);
+
+        JLabel p1FiredLabel = new JLabel ("Pellets Fired: " + p1Fired);
+        p1FiredLabel.setForeground (Color.BLUE);
+        p1FiredLabel.setFont (new Font ("Verdana", Font.BOLD, 20));
+        p1FiredLabel.setBounds (300, 500, 200, 30);
+        add (p1FiredLabel);
+
+        String p1Acc = "N/A";
+        
+        JLabel p1Accuracy = new JLabel ("Accuracy: " + (p2Hit/p1Fired) + "%");
+        p1Accuracy.setForeground (Color.BLUE);
+        p1Accuracy.setFont (new Font ("Verdana", Font.BOLD, 20));
+        p1Accuracy.setBounds (300, 550, 200, 30);
+        add (p1Accuracy);
+
+        JLabel p2FiredLabel = new JLabel ("Pellets Fired: " + p2Fired);
+        p2FiredLabel.setForeground (Color.RED);
+        p2FiredLabel.setFont (new Font ("Verdana", Font.BOLD, 20));
+        p2FiredLabel.setBounds (850, 500, 200, 30);
+        add (p2FiredLabel);
+
+        JLabel p2Accuracy = new JLabel ("Accuracy: " + (p2Fired / p1Hit) + "%");
+        p2Accuracy.setForeground (Color.RED);
+        p2Accuracy.setFont (new Font ("Verdana", Font.BOLD, 20));
+        p2Accuracy.setBounds (850, 550, 200, 30);
+        add (p2Accuracy);
+
         revalidate ();
         repaint ();
     }    
