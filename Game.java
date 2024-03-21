@@ -62,7 +62,7 @@ public class Game extends JPanel implements KeyListener{
         intro ();
     }
 
-    public void intro (){
+    private void intro (){
         removeAll ();
         setBackground (new Color (50, 200, 100));
         JLabel intro = new JLabel ("Java Royale");
@@ -99,7 +99,7 @@ public class Game extends JPanel implements KeyListener{
         add (controls);
     }
 
-    public void showControls (){
+    private void showControls (){
         removeAll ();
         setBackground (Color.BLACK);
         JLabel ctrl = new JLabel ("CONTROLS");
@@ -163,7 +163,7 @@ public class Game extends JPanel implements KeyListener{
         add (back);
     }
 
-    public void difficulty (){
+    private void difficulty (){
         removeAll ();
         setBackground (new Color (50, 200, 100));
 
@@ -220,7 +220,7 @@ public class Game extends JPanel implements KeyListener{
         repaint ();
     }
 
-    public void play (){
+    private void play (){
         removeAll ();
         playing = true;
         frameCount = 0;
@@ -425,7 +425,7 @@ public class Game extends JPanel implements KeyListener{
     @Override
     public void keyTyped (KeyEvent e){}
 
-    public void win (int winner){
+    private void win (int winner){
         timer.stop ();
         fpsTimer.stop ();
         removeAll ();
