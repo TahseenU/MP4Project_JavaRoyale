@@ -15,7 +15,7 @@ import javax.swing.SwingConstants;
 import javax.swing.Timer;
 import java.util.ArrayList;
 
-public class Game extends JPanel implements KeyListener {
+public class Game extends JPanel implements KeyListener{
     private int speed;
     private int pSpeed;
     private int x1;
@@ -55,10 +55,10 @@ public class Game extends JPanel implements KeyListener {
         x2 = 1200;
         y2 = 550;
         keysPressed = new boolean[KeyEvent.KEY_LAST];
-        setPreferredSize(new Dimension(1350, 700));
-        setBackground(new Color(50, 200, 100));
-        setFocusable(true);
-        addKeyListener(this);
+        setPreferredSize (new Dimension (1350, 700));
+        setBackground (new Color (50, 200, 100));
+        setFocusable (true);
+        addKeyListener (this);
         intro ();
     }
 
@@ -225,23 +225,23 @@ public class Game extends JPanel implements KeyListener {
         playing = true;
         frameCount = 0;
     
-        fpsTimer = new Timer(1000, new ActionListener() {
+        fpsTimer = new Timer (1000, new ActionListener () {
             @Override
-            public void actionPerformed(ActionEvent e) {
-                System.out.println(frameCount + " FPS");
+            public void actionPerformed (ActionEvent e){
+                System.out.println (frameCount + " FPS");
                 frameCount = 0;
             }
         });
-        fpsTimer.start();
+        fpsTimer.start ();
     
-        timer = new Timer(10, new ActionListener() {
+        timer = new Timer (10, new ActionListener (){
             @Override
-            public void actionPerformed(ActionEvent e) {
+            public void actionPerformed(ActionEvent e){
                 if (p1Health < 100) p1Health += 0.015;
                 if (p2Health < 100) p2Health += 0.015;
-                movePlayers();     
-                movePellets();
-                repaint();
+                movePlayers ();     
+                movePellets ();
+                repaint ();
                 frameCount++;
                 if (p1Health <= 0){
                     if (p2Health <= 0) win (0);
@@ -250,12 +250,12 @@ public class Game extends JPanel implements KeyListener {
                 else if (p2Health <= 0) win (1);
             }
         });
-        timer.start();   
+        timer.start ();   
     }    
 
-    private void movePlayers() {
+    private void movePlayers(){
         if (keysPressed[KeyEvent.VK_W]) if (!(y1 <= 0)) y1 -= speed;
-        if (keysPressed[KeyEvent.VK_A]) if (!(x1 <= 0))x1 -= speed;
+        if (keysPressed[KeyEvent.VK_A]) if (!(x1 <= 0)) x1 -= speed;
         if (keysPressed[KeyEvent.VK_S]) if (!(y1 >= 650)) y1 += speed;
         if (keysPressed[KeyEvent.VK_D]) if (!(x1 >= 1300)) x1 += speed;
 
@@ -265,10 +265,10 @@ public class Game extends JPanel implements KeyListener {
         if (keysPressed[KeyEvent.VK_RIGHT]) if (!(x2 >= 1300)) x2 += speed;
     }
 
-    private void movePellets() {
+    private void movePellets(){
         int xTar;
         int yTar;
-        for (int i = 0; i < pellets.size (); i++) {
+        for (int i = 0; i < pellets.size (); i++){
             Pellet pellet = pellets.get (i);
             if (pellet.getTarget () == 2){
                 xTar = x2;
@@ -278,15 +278,15 @@ public class Game extends JPanel implements KeyListener {
                 xTar = x1;
                 yTar = y1;
             }
-            pellet.move();
+            pellet.move ();
 
             int[] xTargets = new int [55];
             int[] yTargets = new int [55];
             for (int j = 0; j < xTargets.length; j++) xTargets[j] = j + xTar - 4;
             for (int j = 0; j < yTargets.length; j++) yTargets[j] = j + yTar - 4;
 
-            if (pellet.getX() < 0 || pellet.getX() >= getWidth() || pellet.getY() < 0 || pellet.getY() >= getHeight()) {
-                pellets.remove(i);
+            if (pellet.getX () < 0 || pellet.getX () >= getWidth () || pellet.getY () < 0 || pellet.getY () >= getHeight ()){
+                pellets.remove (i);
                 i--;
             }
             else{
@@ -357,48 +357,48 @@ public class Game extends JPanel implements KeyListener {
     }
 
     @Override
-    protected void paintComponent(Graphics g) {
-        super.paintComponent(g);
-        if (!(won) && playing) {
-            Graphics2D g2d = (Graphics2D) g.create();
-            g2d.setColor(Color.BLUE);
-            g2d.fillRect(x1, y1, 50, 50);
-            g2d.setColor(Color.RED);
-            g2d.fillRect(x2, y2, 50, 50);
-            g2d.setColor(Color.WHITE);
-            g2d.fillRect(x1 - 1, y1 - 11, 59, 11);
-            g2d.fillRect(x2 - 1, y2 - 11, 59, 11);
-            g2d.setColor(new Color (255, 0, 255));
-            g2d.fillRect(x1 + 1, y1 - 9, (int) (p1Health / 2 * 1.1), 7);
-            g2d.fillRect(x2 + 1, y2 - 9, (int) (p2Health / 2 * 1.1), 7);
-            for (Pellet pellet : pellets) {
-                if (pellet.getTarget() == 2) g2d.setColor(Color.BLUE);
-                else g2d.setColor(Color.RED);
-                g2d.fillRect((int) pellet.getX(), (int) pellet.getY(), 5, 5);
+    protected void paintComponent (Graphics g){
+        super.paintComponent (g);
+        if (!(won) && playing){
+            Graphics2D g2d = (Graphics2D) g.create ();
+            g2d.setColor (Color.BLUE);
+            g2d.fillRect (x1, y1, 50, 50);
+            g2d.setColor (Color.RED);
+            g2d.fillRect (x2, y2, 50, 50);
+            g2d.setColor (Color.WHITE);
+            g2d.fillRect (x1 - 1, y1 - 11, 59, 11);
+            g2d.fillRect (x2 - 1, y2 - 11, 59, 11);
+            g2d.setColor (new Color (255, 0, 255));
+            g2d.fillRect (x1 + 1, y1 - 9, (int) (p1Health / 2 * 1.1), 7);
+            g2d.fillRect (x2 + 1, y2 - 9, (int) (p2Health / 2 * 1.1), 7);
+            for (Pellet pellet : pellets){
+                if (pellet.getTarget () == 2) g2d.setColor (Color.BLUE);
+                else g2d.setColor (Color.RED);
+                g2d.fillRect ((int) pellet.getX (), (int) pellet.getY (), 5, 5);
             }
-            g2d.dispose();
+            g2d.dispose ();
         }
     }
 
     @Override
-    public void keyPressed(KeyEvent e) {
-        keysPressed[e.getKeyCode()] = true;
+    public void keyPressed (KeyEvent e){
+        keysPressed[e.getKeyCode ()] = true;
         long time = System.currentTimeMillis ();
-        if (e.getKeyCode() == KeyEvent.VK_R) {
+        if (e.getKeyCode () == KeyEvent.VK_R){
             if (time - cd1 >= cooldown){
                 p1Fired++;
                 cd1 = time;
                 pellets.add (new Pellet(x1, y1, x2, y2, 5, pSpeed, 2));
             }
         }
-        if (e.getKeyCode() == KeyEvent.VK_ENTER) {
+        if (e.getKeyCode () == KeyEvent.VK_ENTER){
             if (time - cd2 >= cooldown){
                 p2Fired++;
                 cd2 = time;
-                pellets.add (new Pellet(x2, y2, x1, y1, 5, pSpeed, 1));
+                pellets.add (new Pellet (x2, y2, x1, y1, 5, pSpeed, 1));
             }
         }
-        if (won && e.getKeyCode() == KeyEvent.VK_SPACE){
+        if (won && e.getKeyCode () == KeyEvent.VK_SPACE){
             won = false;
             playing = false;
             p1Health = 100;
@@ -411,22 +411,22 @@ public class Game extends JPanel implements KeyListener {
             p1Hit = 0;
             p2Fired = 0;
             p2Hit = 0;
-            pellets = new ArrayList<>();
+            pellets = new ArrayList<> ();
             intro ();
             repaint ();
         }
     }
 
     @Override
-    public void keyReleased(KeyEvent e){
-        keysPressed[e.getKeyCode()] = false;
+    public void keyReleased (KeyEvent e){
+        keysPressed[e.getKeyCode ()] = false;
     }
 
     @Override
     public void keyTyped (KeyEvent e){}
 
-    public void win (int winner) {
-        timer.stop();
+    public void win (int winner){
+        timer.stop ();
         fpsTimer.stop ();
         removeAll ();
         won = true;
