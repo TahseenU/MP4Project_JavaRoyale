@@ -24,7 +24,8 @@ public class Game extends JPanel implements KeyListener{
     private long cd1;
     private long cd2;
     private boolean[] keysPressed;
-    private ArrayList<Pellet> pellets = new ArrayList<>();
+    private ArrayList<Pellet> pellets;
+    private ArrayList<HealthBox> boxes;
     private Timer timer;
     private Timer fpsTimer;
     private double p1Health;
@@ -41,6 +42,8 @@ public class Game extends JPanel implements KeyListener{
     private int p2Wins;
 
     public Game (){
+        pellets = new ArrayList<> ();
+        boxes = new ArrayList<> ();
         won = false;
         p1Health = 100;
         p2Health = 100;
@@ -251,9 +254,12 @@ public class Game extends JPanel implements KeyListener{
                     else win (2);
                 }
                 else if (p2Health <= 0) win (1);
+                if (Math.random () <= 0.002){
+                    boxes.add (new HealthBox ());
+                }
             }
         });
-        timer.start ();   
+        timer.start ();
     }    
 
     private void movePlayers (){
@@ -266,6 +272,31 @@ public class Game extends JPanel implements KeyListener{
         if (keysPressed[KeyEvent.VK_LEFT]) if (!(x2 <= 0)) x2 -= speed;
         if (keysPressed[KeyEvent.VK_DOWN]) if (!(y2 >= 650)) y2 += speed;
         if (keysPressed[KeyEvent.VK_RIGHT]) if (!(x2 >= 1300)) x2 += speed;
+
+        for (int i = boxes.size()-1; i > 0; i--){
+            for (int j = x1 - 30; j < x1 + 50; j++){
+                for (int k = y1 - 30; k < y1 + 50; k++){
+                    if (j == boxes.get(i).getX() && k == boxes.get(i).getY()){
+                        p1Health += 30;
+                        if (p1Health > 100) p1Health = 100;
+                        boxes.remove (i);
+                    }
+                }
+            }
+        }
+
+        for (int i = 0; i < boxes.size () - 1; i++){
+            for (int j = x2 - 30; j < x2 + 50; j++){
+                for (int k = y2 - 30; k < y2 + 50; k++){
+                    if (j == boxes.get(i).getX() && k == boxes.get(i).getY()){
+                        p2Health += 30;
+                        if (p2Health > 100) p2Health = 100;
+                        boxes.remove (i);
+                        i--;
+                    }
+                }
+            }
+        }
     }
 
     private void movePellets(){
@@ -284,9 +315,9 @@ public class Game extends JPanel implements KeyListener{
             pellet.move ();
 
             int[] xTargets = new int [57];
-            int[] yTargets = new int [57];
+            int[] yTargets = new int [58];
             for (int j = 0; j < xTargets.length; j++) xTargets[j] = j + xTar - 6;
-            for (int j = 0; j < yTargets.length; j++) yTargets[j] = j + yTar - 6;
+            for (int j = 0; j < yTargets.length; j++) yTargets[j] = j + yTar - 7;
 
             if (pellet.getX () < 0 || pellet.getX () >= getWidth () || pellet.getY () < 0 || pellet.getY () >= getHeight ()){
                 pellets.remove (i);
@@ -378,6 +409,13 @@ public class Game extends JPanel implements KeyListener{
                 if (pellet.getTarget () == 2) g2d.setColor (Color.BLUE);
                 else g2d.setColor (Color.RED);
                 g2d.fillRect ((int) pellet.getX (), (int) pellet.getY (), 6, 6);
+            }
+            for (HealthBox box : boxes){
+                g2d.setColor (Color.GREEN);
+                g2d.fillRect (box.getX (), box.getY (), 30, 30);
+                g2d.setColor (Color.WHITE);
+                g2d.fillRect (box.getX () + 5, box.getY () + 12, 20, 6);
+                g2d.fillRect (box.getX () + 12, box.getY () + 5, 6, 20);
             }
             g2d.dispose ();
         }
