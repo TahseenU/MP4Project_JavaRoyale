@@ -1,8 +1,8 @@
-public class HealthBox{
+public class Buff{
     private int x;
     private int y;
     
-    public HealthBox (){
+    public Buff (){
         x = (int) (Math.random () * 1321);
         y = (int) (Math.random () * 691);
     }

@@ -26,11 +26,13 @@ public class Game extends JPanel implements KeyListener{
     private boolean[] keysPressed;
     private ArrayList<Pellet> pellets;
     private ArrayList<HealthBox> boxes;
+    private ArrayList<Buff> buffs;
     private Timer timer;
     private Timer fpsTimer;
     private double p1Health;
     private double p2Health;
-    private int damage;
+    private int p1Damage;
+    private int p2Damage;
     private int frameCount;
     private boolean won;
     private boolean playing;
@@ -44,10 +46,12 @@ public class Game extends JPanel implements KeyListener{
     public Game (){
         pellets = new ArrayList<> ();
         boxes = new ArrayList<> ();
+        buffs = new ArrayList<> ();
         won = false;
-        p1Health = 100;
-        p2Health = 100;
-        damage = 10;
+        p1Health = 150;
+        p2Health = 150;
+        p1Damage = 10;
+        p2Damage = 10;
         speed = 5;
         pSpeed = 11;
         cooldown = 200;
@@ -243,8 +247,8 @@ public class Game extends JPanel implements KeyListener{
         timer = new Timer (10, new ActionListener (){
             @Override
             public void actionPerformed(ActionEvent e){
-                if (p1Health < 100) p1Health += 0.02;
-                if (p2Health < 100) p2Health += 0.02;
+                if (p1Health < 150) p1Health += 0.03;
+                if (p2Health < 150) p2Health += 0.03;
                 movePlayers ();     
                 movePellets ();
                 repaint ();
@@ -254,8 +258,11 @@ public class Game extends JPanel implements KeyListener{
                     else win (2);
                 }
                 else if (p2Health <= 0) win (1);
-                if (Math.random () <= 0.002){
+                if (Math.random () <= 0.001){
                     boxes.add (new HealthBox ());
+                }
+                if (Math.random () <= 0.0005){
+                    buffs.add (new Buff ());
                 }
             }
         });
@@ -273,26 +280,131 @@ public class Game extends JPanel implements KeyListener{
         if (keysPressed[KeyEvent.VK_DOWN]) if (!(y2 >= 650)) y2 += speed;
         if (keysPressed[KeyEvent.VK_RIGHT]) if (!(x2 >= 1300)) x2 += speed;
 
-        for (int i = boxes.size()-1; i > 0; i--){
-            for (int j = x1 - 30; j < x1 + 50; j++){
-                for (int k = y1 - 30; k < y1 + 50; k++){
-                    if (j == boxes.get(i).getX() && k == boxes.get(i).getY()){
-                        p1Health += 30;
-                        if (p1Health > 100) p1Health = 100;
-                        boxes.remove (i);
+        if (boxes.size() > 0){
+            for (int i = boxes.size()-1; i >= 0; i--){
+                for (int j = x1 - 30; j < x1 + 50; j++){
+                    for (int k = y1 - 30; k < y1 + 50; k++){
+                        if (boxes.size() == 0) break;
+                        if (i == boxes.size()) break;
+                        if (j == boxes.get(i).getX() && k == boxes.get(i).getY()){
+                            p1Health += 40;
+                            JLabel health = new JLabel ("+40 Health");
+                            health.setFont (new Font ("Verdana", Font.BOLD, 13));
+                            health.setBounds (x1, y1 - 40, 100, 20);
+                            health.setForeground (Color.ORANGE);
+                            Timer hTimer = new Timer (10, new ActionListener (){
+                                int appear = 0;
+                                @Override
+                                public void actionPerformed (ActionEvent e){
+                                    appear++;
+                                    if (appear == 50){
+                                        remove (health);
+                                        ((Timer) e.getSource ()).stop ();
+                                    }
+                                }
+                            });
+                            hTimer.start ();
+                            add (health);
+
+                            if (p1Health > 150) p1Health = 150;
+                            boxes.remove (i);
+                        }
+                    }
+                }
+            }
+
+            for (int i = boxes.size()-1; i >= 0; i--){
+                for (int j = x2 - 30; j < x2 + 50; j++){
+                    for (int k = y2 - 30; k < y2 + 50; k++){
+                        if (boxes.size() == 0) break;
+                        if (i == boxes.size()) break;
+                        if (j == boxes.get(i).getX() && k == boxes.get(i).getY()){
+                            p2Health += 40;
+                            JLabel health = new JLabel ("+40 Health");
+                            health.setFont (new Font ("Verdana", Font.BOLD, 13));
+                            health.setBounds (x2, y2 - 40, 100, 20);
+                            health.setForeground (Color.ORANGE);
+                            Timer hTimer = new Timer (10, new ActionListener (){
+                                int appear = 0;
+                                @Override
+                                public void actionPerformed (ActionEvent e){
+                                    appear++;
+                                    if (appear == 50){
+                                        remove (health);
+                                        ((Timer) e.getSource ()).stop ();
+                                    }
+                                }
+                            });
+                            hTimer.start ();
+                            add (health);
+
+                            if (p2Health > 150) p2Health = 150;
+                            boxes.remove (i);
+                        }
                     }
                 }
             }
         }
 
-        for (int i = 0; i < boxes.size () - 1; i++){
-            for (int j = x2 - 30; j < x2 + 50; j++){
-                for (int k = y2 - 30; k < y2 + 50; k++){
-                    if (j == boxes.get(i).getX() && k == boxes.get(i).getY()){
-                        p2Health += 30;
-                        if (p2Health > 100) p2Health = 100;
-                        boxes.remove (i);
-                        i--;
+        if (buffs.size() > 0){
+            for (int i = buffs.size()-1; i >= 0; i--){
+                for (int j = x1 - 25; j < x1 + 50; j++){
+                    for (int k = y1 - 25; k < y1 + 50; k++){
+                        if (buffs.size() == 0) break;
+                        if (i == buffs.size()) break;
+                        if (j == buffs.get(i).getX() && k == buffs.get(i).getY()){
+                            p1Damage++;
+                            buffs.remove (i);
+                            System.out.println("Player 1 Attack: " + p1Damage);
+                            JLabel dmg = new JLabel ("+1 Damage");
+                            dmg.setFont (new Font ("Verdana", Font.BOLD, 13));
+                            dmg.setBounds (x1, y1 - 40, 100, 20);
+                            dmg.setForeground (Color.ORANGE);
+                            Timer dTimer = new Timer (10, new ActionListener (){
+                                int appear = 0;
+                                @Override
+                                public void actionPerformed (ActionEvent e){
+                                    appear++;
+                                    if (appear == 50){
+                                        remove (dmg);
+                                        ((Timer) e.getSource ()).stop ();
+                                    }
+                                }
+                            });
+                            dTimer.start ();
+                            add (dmg);
+                        }
+                    }
+                }
+            }
+
+            for (int i = buffs.size()-1; i >= 0; i--){
+                for (int j = x2 - 25; j < x2 + 50; j++){
+                    for (int k = y2 - 25; k < y2 + 50; k++){
+                        if (buffs.size() == 0) break;
+                        if (i == buffs.size()) break;
+                        if (j == buffs.get(i).getX() && k == buffs.get(i).getY()){
+                            p2Damage++;
+                            buffs.remove (i);
+                            System.out.println("Player 2 Attack: " + p2Damage);
+                            JLabel dmg = new JLabel ("+1 Damage");
+                            dmg.setFont (new Font ("Verdana", Font.BOLD, 13));
+                            dmg.setBounds (x2, y2 - 40, 100, 20);
+                            dmg.setForeground (Color.ORANGE);
+                            Timer dTimer = new Timer (10, new ActionListener (){
+                                int appear = 0;
+                                @Override
+                                public void actionPerformed (ActionEvent e){
+                                    appear++;
+                                    if (appear == 50){
+                                        remove (dmg);
+                                        ((Timer) e.getSource ()).stop ();
+                                    }
+                                }
+                            });
+                            dTimer.start ();
+                            add (dmg);
+                        }
                     }
                 }
             }
@@ -329,56 +441,102 @@ public class Game extends JPanel implements KeyListener{
                         if (xTargets[j] == pellet.getX () && yTargets[k] == pellet.getY ()){
                             pellets.remove (i);
                             if (pellet.getTarget () == 2){
-                                if (Math.random () >= 0.95){
-                                    p2Health -= (2 * damage);
-                                    p2Hit++;
-                                    JLabel crit = new JLabel ("CRITICAL HIT");
-                                    crit.setFont (new Font ("Verdana", Font.BOLD, 13));
-                                    crit.setBounds (x2, y2 - 40, 100, 20);
-                                    crit.setForeground (Color.ORANGE);
-                                    Timer cTimer = new Timer (10, new ActionListener (){
-                                        int appear = 0;
-                                        @Override
-                                        public void actionPerformed (ActionEvent e){
-                                            appear++;
-                                            if (appear == 50){
-                                                remove (crit);
-                                                ((Timer) e.getSource ()).stop ();
+                                if (Math.random () <= 0.05){
+                                    if (Math.random() <= 0.1){
+                                        p2Health -= (10 * p1Damage);
+                                        p2Hit++;
+                                        JLabel crit = new JLabel ("SUPER CRIT");
+                                        crit.setFont (new Font ("Verdana", Font.BOLD, 13));
+                                        crit.setBounds (x2, y2 - 40, 100, 20);
+                                        crit.setForeground (new Color (150, 0, 255));
+                                        Timer cTimer = new Timer (10, new ActionListener (){
+                                            int appear = 0;
+                                            @Override
+                                            public void actionPerformed (ActionEvent e){
+                                                appear++;
+                                                if (appear == 50){
+                                                    remove (crit);
+                                                    ((Timer) e.getSource ()).stop ();
+                                                }
                                             }
-                                        }
-                                    });
-                                    cTimer.start ();
-                                    add (crit);
+                                        });
+                                        cTimer.start ();
+                                        add (crit);
+                                    }
+                                    else{
+                                        p2Health -= (2.5 * p1Damage);
+                                        p2Hit++;
+                                        JLabel crit = new JLabel ("CRITICAL HIT");
+                                        crit.setFont (new Font ("Verdana", Font.BOLD, 13));
+                                        crit.setBounds (x2, y2 - 40, 100, 20);
+                                        crit.setForeground (Color.ORANGE);
+                                        Timer cTimer = new Timer (10, new ActionListener (){
+                                            int appear = 0;
+                                            @Override
+                                            public void actionPerformed (ActionEvent e){
+                                                appear++;
+                                                if (appear == 50){
+                                                    remove (crit);
+                                                    ((Timer) e.getSource ()).stop ();
+                                                }
+                                            }
+                                        });
+                                        cTimer.start ();
+                                        add (crit);
+                                    }
                                 }
                                 else{
-                                    p2Health -= damage;
+                                    p2Health -= p1Damage;
                                     p2Hit++;
                                 }
                             }
                             else{
-                                if (Math.random () >= 0.95){
-                                    p1Health -= (2 * damage);
-                                    p1Hit++;
-                                    JLabel crit = new JLabel ("CRITICAL HIT");
-                                    crit.setFont (new Font ("Verdana", Font.BOLD, 13));
-                                    crit.setBounds (x1, y1 - 40, 100, 20);
-                                    crit.setForeground (Color.ORANGE);
-                                    Timer cTimer = new Timer (10, new ActionListener (){
-                                        int appear = 0;
-                                        @Override
-                                        public void actionPerformed (ActionEvent e){
-                                            appear++;
-                                            if (appear == 50){
-                                                remove (crit);
-                                                ((Timer) e.getSource ()).stop ();
+                                if (Math.random () <= 0.05){
+                                    if (Math.random() <= 0.1){
+                                        p1Health -= (10 * p2Damage);
+                                        p1Hit++;
+                                        JLabel crit = new JLabel ("SUPER CRIT");
+                                        crit.setFont (new Font ("Verdana", Font.BOLD, 13));
+                                        crit.setBounds (x1, y1 - 40, 100, 20);
+                                        crit.setForeground (new Color (150, 0, 255));
+                                        Timer cTimer = new Timer (10, new ActionListener (){
+                                            int appear = 0;
+                                            @Override
+                                            public void actionPerformed (ActionEvent e){
+                                                appear++;
+                                                if (appear == 50){
+                                                    remove (crit);
+                                                    ((Timer) e.getSource ()).stop ();
+                                                }
                                             }
-                                        }
-                                    });
-                                    cTimer.start ();
-                                    add (crit);
+                                        });
+                                        cTimer.start ();
+                                        add (crit);
+                                    }
+                                    else{
+                                        p1Health -= (2.5 * p2Damage);
+                                        p1Hit++;
+                                        JLabel crit = new JLabel ("CRITICAL HIT");
+                                        crit.setFont (new Font ("Verdana", Font.BOLD, 13));
+                                        crit.setBounds (x1, y1 - 40, 100, 20);
+                                        crit.setForeground (Color.ORANGE);
+                                        Timer cTimer = new Timer (10, new ActionListener (){
+                                            int appear = 0;
+                                            @Override
+                                            public void actionPerformed (ActionEvent e){
+                                                appear++;
+                                                if (appear == 50){
+                                                    remove (crit);
+                                                    ((Timer) e.getSource ()).stop ();
+                                                }
+                                            }
+                                        });
+                                        cTimer.start ();
+                                        add (crit);
+                                    }
                                 }
                                 else{
-                                    p1Health -= damage;
+                                    p1Health -= p2Damage;
                                     p1Hit++;
                                 }
                             }
@@ -403,8 +561,8 @@ public class Game extends JPanel implements KeyListener{
             g2d.fillRect (x1 - 1, y1 - 11, 59, 11);
             g2d.fillRect (x2 - 1, y2 - 11, 59, 11);
             g2d.setColor (new Color (255, 0, 255));
-            g2d.fillRect (x1 + 1, y1 - 9, (int) (p1Health / 2 * 1.1), 7);
-            g2d.fillRect (x2 + 1, y2 - 9, (int) (p2Health / 2 * 1.1), 7);
+            g2d.fillRect (x1 + 1, y1 - 9, (int) (p1Health / 3 * 1.1), 7);
+            g2d.fillRect (x2 + 1, y2 - 9, (int) (p2Health / 3 * 1.1), 7);
             for (Pellet pellet : pellets){
                 if (pellet.getTarget () == 2) g2d.setColor (Color.BLUE);
                 else g2d.setColor (Color.RED);
@@ -416,6 +574,10 @@ public class Game extends JPanel implements KeyListener{
                 g2d.setColor (Color.WHITE);
                 g2d.fillRect (box.getX () + 5, box.getY () + 12, 20, 6);
                 g2d.fillRect (box.getX () + 12, box.getY () + 5, 6, 20);
+            }
+            for (Buff buff : buffs){
+                g2d.setColor (new Color (200, 0, 255));
+                g2d.fillRect (buff.getX(), buff.getY(), 25, 25);
             }
             g2d.dispose ();
         }
@@ -429,14 +591,14 @@ public class Game extends JPanel implements KeyListener{
             if (time - cd1 >= cooldown){
                 p1Fired++;
                 cd1 = time;
-                pellets.add (new Pellet(x1, y1, x2, y2, 5, pSpeed, 2));
+                pellets.add (new Pellet(x1, y1, x2, y2, 6, pSpeed, 2));
             }
         }
         if (e.getKeyCode () == KeyEvent.VK_ENTER){
             if (time - cd2 >= cooldown){
                 p2Fired++;
                 cd2 = time;
-                pellets.add (new Pellet (x2, y2, x1, y1, 5, pSpeed, 1));
+                pellets.add (new Pellet (x2, y2, x1, y1, 6, pSpeed, 1));
             }
         }
         if (won && e.getKeyCode () == KeyEvent.VK_SPACE){
@@ -444,6 +606,8 @@ public class Game extends JPanel implements KeyListener{
             playing = false;
             p1Health = 100;
             p2Health = 100;
+            p1Damage = 10;
+            p2Damage = 10;
             x1 = 100;
             y1 = 100;
             x2 = 1200;
@@ -453,6 +617,8 @@ public class Game extends JPanel implements KeyListener{
             p2Fired = 0;
             p2Hit = 0;
             pellets = new ArrayList<> ();
+            boxes = new ArrayList<> ();
+            buffs = new ArrayList<> ();
             intro ();
             repaint ();
         }
@@ -522,6 +688,12 @@ public class Game extends JPanel implements KeyListener{
         winsLabel1.setBounds (300, 450, 200, 30);
         add (winsLabel1);
 
+        JLabel attack1 = new JLabel ("Damage: " + p1Damage);
+        attack1.setForeground (Color.BLUE);
+        attack1.setFont (new Font ("Verdana", Font.BOLD, 20));
+        attack1.setBounds (300, 500, 200, 30);
+        add (attack1);
+
         JLabel p2Stats = new JLabel ("Player 2 Stats:");
         p2Stats.setForeground (Color.RED);
         p2Stats.setFont (new Font ("Verdana", Font.BOLD, 30));
@@ -547,10 +719,16 @@ public class Game extends JPanel implements KeyListener{
         winsLabel2.setBounds (850, 450, 200, 30);
         add (winsLabel2);
 
+        JLabel attack2 = new JLabel ("Damage: " + p2Damage);
+        attack2.setForeground (Color.RED);
+        attack2.setFont (new Font ("Verdana", Font.BOLD, 20));
+        attack2.setBounds (850, 500, 200, 30);
+        add (attack2);
+
         JLabel playAgain = new JLabel ("Press SPACE to play again");
         playAgain.setForeground (Color.CYAN);
         playAgain.setFont (new Font ("Verdana", Font.BOLD, 30));
-        playAgain.setBounds (450, 550, 500, 35);
+        playAgain.setBounds (450, 600, 500, 35);
         add (playAgain);
 
         revalidate ();
