@@ -224,11 +224,16 @@ public class Game extends JPanel implements KeyListener{
         removeAll ();
         playing = true;
         frameCount = 0;
+        JLabel showFPS = new JLabel ();
+        showFPS.setForeground (Color.WHITE);
+        showFPS.setFont (new Font ("Verdana", Font.BOLD, 12));
+        showFPS.setBounds (5, 5, 50, 10);
+        add (showFPS);
     
         fpsTimer = new Timer (1000, new ActionListener () {
             @Override
             public void actionPerformed (ActionEvent e){
-                System.out.println (frameCount + " FPS");
+                showFPS.setText (frameCount + " FPS");
                 frameCount = 0;
             }
         });
@@ -237,8 +242,8 @@ public class Game extends JPanel implements KeyListener{
         timer = new Timer (10, new ActionListener (){
             @Override
             public void actionPerformed(ActionEvent e){
-                if (p1Health < 100) p1Health += 0.015;
-                if (p2Health < 100) p2Health += 0.015;
+                if (p1Health < 100) p1Health += 0.02;
+                if (p2Health < 100) p2Health += 0.02;
                 movePlayers ();     
                 movePellets ();
                 repaint ();
