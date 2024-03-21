@@ -226,7 +226,7 @@ public class Game extends JPanel implements KeyListener{
         frameCount = 0;
         JLabel showFPS = new JLabel ();
         showFPS.setForeground (Color.WHITE);
-        showFPS.setFont (new Font ("Verdana", Font.BOLD, 12));
+        showFPS.setFont (new Font ("Verdana", Font.BOLD, 10));
         showFPS.setBounds (5, 5, 50, 10);
         add (showFPS);
     
@@ -258,7 +258,7 @@ public class Game extends JPanel implements KeyListener{
         timer.start ();   
     }    
 
-    private void movePlayers(){
+    private void movePlayers (){
         if (keysPressed[KeyEvent.VK_W]) if (!(y1 <= 0)) y1 -= speed;
         if (keysPressed[KeyEvent.VK_A]) if (!(x1 <= 0)) x1 -= speed;
         if (keysPressed[KeyEvent.VK_S]) if (!(y1 >= 650)) y1 += speed;
