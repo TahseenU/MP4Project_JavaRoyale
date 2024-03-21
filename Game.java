@@ -364,11 +364,11 @@ public class Game extends JPanel implements KeyListener {
             g2d.setColor(Color.RED);
             g2d.fillRect(x2, y2, 50, 50);
             g2d.setColor(Color.WHITE);
-            g2d.fillRect(x1, y1 - 9, 54, 9);
-            g2d.fillRect(x2, y2 - 9, 54, 9);
-            g2d.setColor(Color.GREEN);
-            g2d.fillRect(x1 + 2, y1 - 7, (int) (p1Health / 2), 5);
-            g2d.fillRect(x2 + 2, y2 - 7, (int) (p2Health / 2), 5);
+            g2d.fillRect(x1 - 1, y1 - 11, 59, 11);
+            g2d.fillRect(x2 - 1, y2 - 11, 59, 11);
+            g2d.setColor(new Color (255, 0, 255));
+            g2d.fillRect(x1 + 1, y1 - 9, (int) (p1Health / 2 * 1.1), 7);
+            g2d.fillRect(x2 + 1, y2 - 9, (int) (p2Health / 2 * 1.1), 7);
             for (Pellet pellet : pellets) {
                 if (pellet.getTarget() == 2) g2d.setColor(Color.BLUE);
                 else g2d.setColor(Color.RED);
