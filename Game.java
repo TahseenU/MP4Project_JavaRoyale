@@ -129,7 +129,7 @@ public class Game extends JPanel implements KeyListener {
         controls1[1].setText ("DOWN - S");
         controls1[2].setText ("LEFT - A");
         controls1[3].setText ("RIGHT - D");
-        controls1[4].setText ("SHOOT - X");
+        controls1[4].setText ("SHOOT - R");
 
         JLabel[] controls2 = new JLabel[5];
         y = 1;
@@ -175,7 +175,7 @@ public class Game extends JPanel implements KeyListener {
         casual.setBackground (Color.GRAY);
         casual.setForeground (Color.BLACK);
         casual.setFont (new Font ("Verdana", Font.BOLD, 20));
-        casual.setBounds (200, 200, 200, 30);
+        casual.setBounds (200, 250, 200, 30);
         casual.addActionListener (new ActionListener (){
             @Override
             public void actionPerformed (ActionEvent e){
@@ -189,7 +189,7 @@ public class Game extends JPanel implements KeyListener {
         competitive.setBackground (Color.GRAY);
         competitive.setForeground (Color.BLACK);
         competitive.setFont (new Font ("Verdana", Font.BOLD, 20));
-        competitive.setBounds (550, 200, 200, 30);
+        competitive.setBounds (570, 250, 200, 30);
         competitive.addActionListener (new ActionListener (){
             @Override
             public void actionPerformed (ActionEvent e){
@@ -204,7 +204,7 @@ public class Game extends JPanel implements KeyListener {
         pro.setBackground (Color.GRAY);
         pro.setForeground (Color.BLACK);
         pro.setFont (new Font ("Verdana", Font.BOLD, 20));
-        pro.setBounds (850, 200, 200, 30);
+        pro.setBounds (940, 250, 200, 30);
         pro.addActionListener (new ActionListener (){
             @Override
             public void actionPerformed (ActionEvent e){
@@ -235,8 +235,8 @@ public class Game extends JPanel implements KeyListener {
         timer = new Timer(10, new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                if (p1Health < 100) p1Health += 0.01;
-                if (p2Health < 100) p2Health += 0.01;
+                if (p1Health < 100) p1Health += 0.015;
+                if (p2Health < 100) p2Health += 0.015;
                 movePlayers();     
                 movePellets();
                 repaint();
@@ -293,12 +293,58 @@ public class Game extends JPanel implements KeyListener {
                         if (xTargets[j] == pellet.getX () && yTargets[k] == pellet.getY ()){
                             pellets.remove (i);
                             if (pellet.getTarget () == 2){
-                                p2Health -= damage;
-                                p2Hit++;
+                                if (Math.random () >= 0.95){
+                                    p2Health -= (2 * damage);
+                                    p2Hit++;
+                                    JLabel crit = new JLabel ("CRITICAL HIT");
+                                    crit.setFont (new Font ("Verdana", Font.BOLD, 13));
+                                    crit.setBounds (x2, y2 - 40, 100, 20);
+                                    crit.setForeground (Color.ORANGE);
+                                    Timer cTimer = new Timer (10, new ActionListener (){
+                                        int appear = 0;
+                                        @Override
+                                        public void actionPerformed (ActionEvent e){
+                                            appear++;
+                                            if (appear == 50){
+                                                remove (crit);
+                                                ((Timer) e.getSource ()).stop ();
+                                            }
+                                        }
+                                    });
+                                    cTimer.start ();
+                                    add (crit);
+                                }
+                                else{
+                                    p2Health -= damage;
+                                    p2Hit++;
+                                }
                             }
                             else{
-                                p1Health -= damage;
-                                p1Hit++;
+                                if (Math.random () >= 0.95){
+                                    p1Health -= (2 * damage);
+                                    p1Hit++;
+                                    JLabel crit = new JLabel ("CRITICAL HIT");
+                                    crit.setFont (new Font ("Verdana", Font.BOLD, 13));
+                                    crit.setBounds (x1, y1 - 40, 100, 20);
+                                    crit.setForeground (Color.ORANGE);
+                                    Timer cTimer = new Timer (10, new ActionListener (){
+                                        int appear = 0;
+                                        @Override
+                                        public void actionPerformed (ActionEvent e){
+                                            appear++;
+                                            if (appear == 50){
+                                                remove (crit);
+                                                ((Timer) e.getSource ()).stop ();
+                                            }
+                                        }
+                                    });
+                                    cTimer.start ();
+                                    add (crit);
+                                }
+                                else{
+                                    p1Health -= damage;
+                                    p1Hit++;
+                                }
                             }
                             i--;
                         }
@@ -336,7 +382,7 @@ public class Game extends JPanel implements KeyListener {
     public void keyPressed(KeyEvent e) {
         keysPressed[e.getKeyCode()] = true;
         long time = System.currentTimeMillis ();
-        if (e.getKeyCode() == KeyEvent.VK_X) {
+        if (e.getKeyCode() == KeyEvent.VK_R) {
             if (time - cd1 >= cooldown){
                 p1Fired++;
                 cd1 = time;
@@ -363,12 +409,15 @@ public class Game extends JPanel implements KeyListener {
     public void win (int winner) {
         timer.stop();
         fpsTimer.stop ();
+        removeAll ();
         won = true;
         String cong = "";
+        int x = 0;
         Color color = Color.BLACK;
         switch (winner){
             case 0:
                 cong = "DRAW";
+                x = 80;
                 break;
             case 1:
                 cong = "BLUE WINS!";
@@ -383,30 +432,42 @@ public class Game extends JPanel implements KeyListener {
         winnerLabel.setFont (new Font ("Verdana", Font.BOLD, 50));
         winnerLabel.setForeground (color);
         setLayout (null);
-        winnerLabel.setBounds (520, 300, 350, 50);
+        winnerLabel.setBounds (520 + x, 300, 350, 50);
         add (winnerLabel);
+
+        JLabel p1Stats = new JLabel ("Player 1 Stats:");
+        p1Stats.setForeground (Color.BLUE);
+        p1Stats.setFont (new Font ("Verdana", Font.BOLD, 30));
+        p1Stats.setBounds (270, 450, 300, 30);
+        add (p1Stats);
 
         JLabel p1FiredLabel = new JLabel ("Pellets Fired: " + p1Fired);
         p1FiredLabel.setForeground (Color.BLUE);
         p1FiredLabel.setFont (new Font ("Verdana", Font.BOLD, 20));
         p1FiredLabel.setBounds (300, 500, 200, 30);
         add (p1FiredLabel);
-
-        String p1Acc = "N/A";
         
-        JLabel p1Accuracy = new JLabel ("Accuracy: " + (p2Hit/p1Fired) + "%");
+        JLabel p1Accuracy = new JLabel ("Accuracy: " + ((int)((double)p2Hit / p1Fired * 100)) + "%");
+        if ((int)((double)p2Hit / p1Fired * 100) == 0) p1Accuracy.setText ("Accuracy: N/A");
         p1Accuracy.setForeground (Color.BLUE);
         p1Accuracy.setFont (new Font ("Verdana", Font.BOLD, 20));
         p1Accuracy.setBounds (300, 550, 200, 30);
         add (p1Accuracy);
 
+        JLabel p2Stats = new JLabel ("Player 2 Stats:");
+        p2Stats.setForeground (Color.RED);
+        p2Stats.setFont (new Font ("Verdana", Font.BOLD, 30));
+        p2Stats.setBounds (820, 450, 300, 30);
+        add (p2Stats);
+        
         JLabel p2FiredLabel = new JLabel ("Pellets Fired: " + p2Fired);
         p2FiredLabel.setForeground (Color.RED);
         p2FiredLabel.setFont (new Font ("Verdana", Font.BOLD, 20));
         p2FiredLabel.setBounds (850, 500, 200, 30);
         add (p2FiredLabel);
 
-        JLabel p2Accuracy = new JLabel ("Accuracy: " + (p2Fired / p1Hit) + "%");
+        JLabel p2Accuracy = new JLabel ("Accuracy: " + ((int)((double)p1Hit / p2Fired * 100)) + "%");
+        if ((int)((double)p1Hit / p2Fired * 100) == 0) p2Accuracy.setText ("Accuracy: N/A");
         p2Accuracy.setForeground (Color.RED);
         p2Accuracy.setFont (new Font ("Verdana", Font.BOLD, 20));
         p2Accuracy.setBounds (850, 550, 200, 30);
