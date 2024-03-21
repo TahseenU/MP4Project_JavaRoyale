@@ -167,10 +167,10 @@ public class Game extends JPanel implements KeyListener{
         removeAll ();
         setBackground (new Color (50, 200, 100));
 
-        JLabel difficulty = new JLabel ("SELECT DIFFICULTY");
+        JLabel difficulty = new JLabel ("SELECT SPEED DIFFICULTY");
         difficulty.setForeground (new Color (150, 0, 255));
         difficulty.setFont (new Font ("Verdana", Font.BOLD, 40));
-        difficulty.setBounds (450, 50, 500, 50);
+        difficulty.setBounds (375, 75, 700, 50);
         add (difficulty);
 
         JButton casual = new JButton ("Casual");
@@ -280,10 +280,10 @@ public class Game extends JPanel implements KeyListener{
             }
             pellet.move ();
 
-            int[] xTargets = new int [55];
-            int[] yTargets = new int [55];
-            for (int j = 0; j < xTargets.length; j++) xTargets[j] = j + xTar - 4;
-            for (int j = 0; j < yTargets.length; j++) yTargets[j] = j + yTar - 4;
+            int[] xTargets = new int [57];
+            int[] yTargets = new int [57];
+            for (int j = 0; j < xTargets.length; j++) xTargets[j] = j + xTar - 6;
+            for (int j = 0; j < yTargets.length; j++) yTargets[j] = j + yTar - 6;
 
             if (pellet.getX () < 0 || pellet.getX () >= getWidth () || pellet.getY () < 0 || pellet.getY () >= getHeight ()){
                 pellets.remove (i);
@@ -374,7 +374,7 @@ public class Game extends JPanel implements KeyListener{
             for (Pellet pellet : pellets){
                 if (pellet.getTarget () == 2) g2d.setColor (Color.BLUE);
                 else g2d.setColor (Color.RED);
-                g2d.fillRect ((int) pellet.getX (), (int) pellet.getY (), 5, 5);
+                g2d.fillRect ((int) pellet.getX (), (int) pellet.getY (), 6, 6);
             }
             g2d.dispose ();
         }
