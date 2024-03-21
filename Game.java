@@ -39,6 +39,8 @@ public class Game extends JPanel implements KeyListener {
     private int p2Fired;
     private int p1Hit;
     private int p2Hit;
+    private int p1Wins;
+    private int p2Wins;
 
     public Game (){
         won = false;
@@ -99,7 +101,7 @@ public class Game extends JPanel implements KeyListener {
 
     public void showControls (){
         removeAll ();
-        setBackground (Color.GRAY);
+        setBackground (Color.BLACK);
         JLabel ctrl = new JLabel ("CONTROLS");
         add (ctrl);
 
@@ -438,10 +440,12 @@ public class Game extends JPanel implements KeyListener {
                 break;
             case 1:
                 cong = "BLUE WINS!";
+                p1Wins++;
                 color = Color.BLUE;
                 break;
             case 2:
                 cong = "RED WINS!";
+                p2Wins++;
                 color = Color.RED;
                 break;
         }
@@ -471,6 +475,12 @@ public class Game extends JPanel implements KeyListener {
         p1Accuracy.setBounds (300, 400, 200, 30);
         add (p1Accuracy);
 
+        JLabel winsLabel1 = new JLabel ("Wins: " + p1Wins);
+        winsLabel1.setForeground (Color.BLUE);
+        winsLabel1.setFont (new Font ("Verdana", Font.BOLD, 20));
+        winsLabel1.setBounds (300, 450, 200, 30);
+        add (winsLabel1);
+
         JLabel p2Stats = new JLabel ("Player 2 Stats:");
         p2Stats.setForeground (Color.RED);
         p2Stats.setFont (new Font ("Verdana", Font.BOLD, 30));
@@ -489,6 +499,12 @@ public class Game extends JPanel implements KeyListener {
         p2Accuracy.setFont (new Font ("Verdana", Font.BOLD, 20));
         p2Accuracy.setBounds (850, 400, 200, 30);
         add (p2Accuracy);
+
+        JLabel winsLabel2 = new JLabel ("Wins: " + p2Wins);
+        winsLabel2.setForeground (Color.RED);
+        winsLabel2.setFont (new Font ("Verdana", Font.BOLD, 20));
+        winsLabel2.setBounds (850, 450, 200, 30);
+        add (winsLabel2);
 
         JLabel playAgain = new JLabel ("Press SPACE to play again");
         playAgain.setForeground (Color.CYAN);
