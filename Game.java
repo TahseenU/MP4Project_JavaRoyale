@@ -31,8 +31,8 @@ public class Game extends JPanel implements KeyListener{
     private Timer fpsTimer;
     private double p1Health;
     private double p2Health;
-    private int p1Damage;
-    private int p2Damage;
+    private int p1Attack;
+    private int p2Attack;
     private int frameCount;
     private boolean won;
     private boolean playing;
@@ -50,8 +50,8 @@ public class Game extends JPanel implements KeyListener{
         won = false;
         p1Health = 150;
         p2Health = 150;
-        p1Damage = 10;
-        p2Damage = 10;
+        p1Attack = 10;
+        p2Attack = 10;
         speed = 5;
         pSpeed = 11;
         cooldown = 200;
@@ -59,7 +59,7 @@ public class Game extends JPanel implements KeyListener{
         y1 = 100;
         x2 = 1200;
         y2 = 550;
-        keysPressed = new boolean[KeyEvent.KEY_LAST];
+        keysPressed = new boolean[1000];
         setPreferredSize (new Dimension (1350, 700));
         setBackground (new Color (50, 200, 100));
         setFocusable (true);
@@ -353,10 +353,10 @@ public class Game extends JPanel implements KeyListener{
                         if (buffs.size() == 0) break;
                         if (i == buffs.size()) break;
                         if (j == buffs.get(i).getX() && k == buffs.get(i).getY()){
-                            p1Damage++;
+                            p1Attack++;
                             buffs.remove (i);
-                            System.out.println("Player 1 Attack: " + p1Damage);
-                            JLabel dmg = new JLabel ("+1 Damage");
+                            System.out.println("Player 1 Attack: " + p1Attack);
+                            JLabel dmg = new JLabel ("+1 Attack");
                             dmg.setFont (new Font ("Verdana", Font.BOLD, 13));
                             dmg.setBounds (x1, y1 - 40, 100, 20);
                             dmg.setForeground (Color.ORANGE);
@@ -384,10 +384,10 @@ public class Game extends JPanel implements KeyListener{
                         if (buffs.size() == 0) break;
                         if (i == buffs.size()) break;
                         if (j == buffs.get(i).getX() && k == buffs.get(i).getY()){
-                            p2Damage++;
+                            p2Attack++;
                             buffs.remove (i);
-                            System.out.println("Player 2 Attack: " + p2Damage);
-                            JLabel dmg = new JLabel ("+1 Damage");
+                            System.out.println("Player 2 Attack: " + p2Attack);
+                            JLabel dmg = new JLabel ("+1 Attack");
                             dmg.setFont (new Font ("Verdana", Font.BOLD, 13));
                             dmg.setBounds (x2, y2 - 40, 100, 20);
                             dmg.setForeground (Color.ORANGE);
@@ -443,11 +443,11 @@ public class Game extends JPanel implements KeyListener{
                             if (pellet.getTarget () == 2){
                                 if (Math.random () <= 0.05){
                                     if (Math.random() <= 0.1){
-                                        p2Health -= (10 * p1Damage);
+                                        p2Health -= (10 * p1Attack);
                                         p2Hit++;
                                         JLabel crit = new JLabel ("SUPER CRIT");
-                                        crit.setFont (new Font ("Verdana", Font.BOLD, 13));
-                                        crit.setBounds (x2, y2 - 40, 100, 20);
+                                        crit.setFont (new Font ("Verdana", Font.BOLD, 16));
+                                        crit.setBounds (x2 - 20, y2 - 40, 175, 30);
                                         crit.setForeground (new Color (150, 0, 255));
                                         Timer cTimer = new Timer (10, new ActionListener (){
                                             int appear = 0;
@@ -464,7 +464,7 @@ public class Game extends JPanel implements KeyListener{
                                         add (crit);
                                     }
                                     else{
-                                        p2Health -= (2.5 * p1Damage);
+                                        p2Health -= (2.5 * p1Attack);
                                         p2Hit++;
                                         JLabel crit = new JLabel ("CRITICAL HIT");
                                         crit.setFont (new Font ("Verdana", Font.BOLD, 13));
@@ -486,18 +486,18 @@ public class Game extends JPanel implements KeyListener{
                                     }
                                 }
                                 else{
-                                    p2Health -= p1Damage;
+                                    p2Health -= p1Attack;
                                     p2Hit++;
                                 }
                             }
                             else{
                                 if (Math.random () <= 0.05){
                                     if (Math.random() <= 0.1){
-                                        p1Health -= (10 * p2Damage);
+                                        p1Health -= (10 * p2Attack);
                                         p1Hit++;
                                         JLabel crit = new JLabel ("SUPER CRIT");
-                                        crit.setFont (new Font ("Verdana", Font.BOLD, 13));
-                                        crit.setBounds (x1, y1 - 40, 100, 20);
+                                        crit.setFont (new Font ("Verdana", Font.BOLD, 16));
+                                        crit.setBounds (x1 - 20, y1 - 40, 175, 30);
                                         crit.setForeground (new Color (150, 0, 255));
                                         Timer cTimer = new Timer (10, new ActionListener (){
                                             int appear = 0;
@@ -514,7 +514,7 @@ public class Game extends JPanel implements KeyListener{
                                         add (crit);
                                     }
                                     else{
-                                        p1Health -= (2.5 * p2Damage);
+                                        p1Health -= (2.5 * p2Attack);
                                         p1Hit++;
                                         JLabel crit = new JLabel ("CRITICAL HIT");
                                         crit.setFont (new Font ("Verdana", Font.BOLD, 13));
@@ -536,7 +536,7 @@ public class Game extends JPanel implements KeyListener{
                                     }
                                 }
                                 else{
-                                    p1Health -= p2Damage;
+                                    p1Health -= p2Attack;
                                     p1Hit++;
                                 }
                             }
@@ -604,10 +604,10 @@ public class Game extends JPanel implements KeyListener{
         if (won && e.getKeyCode () == KeyEvent.VK_SPACE){
             won = false;
             playing = false;
-            p1Health = 100;
-            p2Health = 100;
-            p1Damage = 10;
-            p2Damage = 10;
+            p1Health = 150;
+            p2Health = 150;
+            p1Attack = 10;
+            p2Attack = 10;
             x1 = 100;
             y1 = 100;
             x2 = 1200;
@@ -682,17 +682,17 @@ public class Game extends JPanel implements KeyListener{
         p1Accuracy.setBounds (300, 400, 200, 30);
         add (p1Accuracy);
 
+        JLabel attack1 = new JLabel ("Attack: " + p1Attack);
+        attack1.setForeground (Color.BLUE);
+        attack1.setFont (new Font ("Verdana", Font.BOLD, 20));
+        attack1.setBounds (300, 450, 200, 30);
+        add (attack1);
+
         JLabel winsLabel1 = new JLabel ("Wins: " + p1Wins);
         winsLabel1.setForeground (Color.BLUE);
         winsLabel1.setFont (new Font ("Verdana", Font.BOLD, 20));
-        winsLabel1.setBounds (300, 450, 200, 30);
+        winsLabel1.setBounds (300,500, 200, 30);
         add (winsLabel1);
-
-        JLabel attack1 = new JLabel ("Damage: " + p1Damage);
-        attack1.setForeground (Color.BLUE);
-        attack1.setFont (new Font ("Verdana", Font.BOLD, 20));
-        attack1.setBounds (300, 500, 200, 30);
-        add (attack1);
 
         JLabel p2Stats = new JLabel ("Player 2 Stats:");
         p2Stats.setForeground (Color.RED);
@@ -713,17 +713,17 @@ public class Game extends JPanel implements KeyListener{
         p2Accuracy.setBounds (850, 400, 200, 30);
         add (p2Accuracy);
 
+        JLabel attack2 = new JLabel ("Attack: " + p2Attack);
+        attack2.setForeground (Color.RED);
+        attack2.setFont (new Font ("Verdana", Font.BOLD, 20));
+        attack2.setBounds (850, 450, 200, 30);
+        add (attack2);
+
         JLabel winsLabel2 = new JLabel ("Wins: " + p2Wins);
         winsLabel2.setForeground (Color.RED);
         winsLabel2.setFont (new Font ("Verdana", Font.BOLD, 20));
-        winsLabel2.setBounds (850, 450, 200, 30);
+        winsLabel2.setBounds (850, 500, 200, 30);
         add (winsLabel2);
-
-        JLabel attack2 = new JLabel ("Damage: " + p2Damage);
-        attack2.setForeground (Color.RED);
-        attack2.setFont (new Font ("Verdana", Font.BOLD, 20));
-        attack2.setBounds (850, 500, 200, 30);
-        add (attack2);
 
         JLabel playAgain = new JLabel ("Press SPACE to play again");
         playAgain.setForeground (Color.CYAN);

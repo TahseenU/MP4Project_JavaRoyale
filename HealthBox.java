@@ -4,7 +4,7 @@ public class HealthBox{
     
     public HealthBox (){
         x = (int) (Math.random () * 1321);
-        y = (int) (Math.random () * 691);
+        y = (int) (Math.random () * 661);
     }
 
     public int getX (){
