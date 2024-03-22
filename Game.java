@@ -697,7 +697,7 @@ public class Game extends JPanel implements KeyListener{
         winnerLabel.setFont (new Font ("Verdana", Font.BOLD, 50));
         winnerLabel.setForeground (color);
         setLayout (null);
-        winnerLabel.setBounds (520 + x, 150, 350, 50);
+        winnerLabel.setBounds (500 + x, 150, 350, 50);
         add (winnerLabel);
 
         JLabel p1Stats = new JLabel ("Player 1 Stats:");
@@ -706,61 +706,33 @@ public class Game extends JPanel implements KeyListener{
         p1Stats.setBounds (270, 300, 300, 30);
         add (p1Stats);
 
-        JLabel p1FiredLabel = new JLabel ("Pellets Fired: " + p1Fired);
-        p1FiredLabel.setForeground (Color.BLUE);
-        p1FiredLabel.setFont (new Font ("Verdana", Font.BOLD, 20));
-        p1FiredLabel.setBounds (300, 350, 200, 30);
-        add (p1FiredLabel);
-        
-        JLabel p1Accuracy = new JLabel ("Accuracy: " + ((int)((double)p2Hit / p1Fired * 100)) + "%");
-        if ((int)((double)p2Hit / p1Fired * 100) == 0) p1Accuracy.setText ("Accuracy: N/A");
-        p1Accuracy.setForeground (Color.BLUE);
-        p1Accuracy.setFont (new Font ("Verdana", Font.BOLD, 20));
-        p1Accuracy.setBounds (300, 400, 200, 30);
-        add (p1Accuracy);
-
-        JLabel attack1 = new JLabel ("Attack: " + p1Attack);
-        attack1.setForeground (Color.BLUE);
-        attack1.setFont (new Font ("Verdana", Font.BOLD, 20));
-        attack1.setBounds (300, 450, 200, 30);
-        add (attack1);
-
-        JLabel winsLabel1 = new JLabel ("Wins: " + p1Wins);
-        winsLabel1.setForeground (Color.BLUE);
-        winsLabel1.setFont (new Font ("Verdana", Font.BOLD, 20));
-        winsLabel1.setBounds (300,500, 200, 30);
-        add (winsLabel1);
-
         JLabel p2Stats = new JLabel ("Player 2 Stats:");
         p2Stats.setForeground (Color.RED);
         p2Stats.setFont (new Font ("Verdana", Font.BOLD, 30));
         p2Stats.setBounds (820, 300, 300, 30);
         add (p2Stats);
-        
-        JLabel p2FiredLabel = new JLabel ("Pellets Fired: " + p2Fired);
-        p2FiredLabel.setForeground (Color.RED);
-        p2FiredLabel.setFont (new Font ("Verdana", Font.BOLD, 20));
-        p2FiredLabel.setBounds (850, 350, 200, 30);
-        add (p2FiredLabel);
 
-        JLabel p2Accuracy = new JLabel ("Accuracy: " + ((int)((double)p1Hit / p2Fired * 100)) + "%");
-        if ((int)((double)p1Hit / p2Fired * 100) == 0) p2Accuracy.setText ("Accuracy: N/A");
-        p2Accuracy.setForeground (Color.RED);
-        p2Accuracy.setFont (new Font ("Verdana", Font.BOLD, 20));
-        p2Accuracy.setBounds (850, 400, 200, 30);
-        add (p2Accuracy);
-
-        JLabel attack2 = new JLabel ("Attack: " + p2Attack);
-        attack2.setForeground (Color.RED);
-        attack2.setFont (new Font ("Verdana", Font.BOLD, 20));
-        attack2.setBounds (850, 450, 200, 30);
-        add (attack2);
-
-        JLabel winsLabel2 = new JLabel ("Wins: " + p2Wins);
-        winsLabel2.setForeground (Color.RED);
-        winsLabel2.setFont (new Font ("Verdana", Font.BOLD, 20));
-        winsLabel2.setBounds (850, 500, 200, 30);
-        add (winsLabel2);
+        JLabel[][] stats = new JLabel[2][4];
+        for (int r = 0; r < 2; r++){
+            for (int c = 0; c < 4; c++){
+                stats[r][c] = new JLabel ();
+                if (r == 0) stats[r][c].setForeground (Color.BLUE);
+                else stats[r][c].setForeground (Color.RED);
+                stats[r][c].setFont (new Font ("Verdana", Font.BOLD, 20));
+                stats[r][c].setBounds (300 + 550 * r, 350 + 40 * c, 200, 30);
+                add (stats[r][c]);
+            }
+        }
+        stats[0][0].setText ("Pellets Fired: " + p1Fired);
+        stats[0][1].setText ("Accuracy: " + ((int) ((double)p2Hit / p1Fired * 100)) + "%");
+        if ((int)((double) p2Hit / p1Fired * 100) == 0) stats[0][1].setText ("Accuracy: N/A");
+        stats[0][2].setText ("Attack: " + p1Attack);
+        stats[0][3].setText ("Wins: " + p1Wins);
+        stats[1][0].setText ("Pellets Fired: " + p2Fired);
+        stats[1][1].setText ("Accuracy: " + ((int)((double)p1Hit / p2Fired * 100)) + "%");
+        if ((int)((double)p1Hit / p2Fired * 100) == 0) stats[1][1].setText ("Accuracy: N/A");
+        stats[1][2].setText ("Attack: " + p2Attack);
+        stats[1][3].setText ("Wins: " + p2Wins);
 
         JLabel playAgain = new JLabel ("Press SPACE to play again");
         playAgain.setForeground (Color.CYAN);
