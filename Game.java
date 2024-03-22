@@ -79,7 +79,7 @@ public class Game extends JPanel implements KeyListener{
 
         JButton start = new JButton ("PLAY");
         start.setForeground (Color.BLUE);
-        start.setBounds (600, 400, 140, 30);
+        start.setBounds (620, 350, 100, 30);
         start.setBackground (Color.GRAY);
         start.setFont (new Font ("Verdana", Font.BOLD, 16));
         start.addActionListener (new ActionListener (){
@@ -90,9 +90,9 @@ public class Game extends JPanel implements KeyListener{
         });
         add (start);
 
-        JButton controls = new JButton ("CONTROLS");
+        JButton controls = new JButton ("HELP");
         controls.setForeground (Color.BLUE);
-        controls.setBounds (600, 460, 140, 30);
+        controls.setBounds (620, 410, 100, 30);
         controls.setBackground (Color.GRAY);
         controls.setFont (new Font ("Verdana", Font.BOLD, 16));
         controls.addActionListener (new ActionListener (){
@@ -102,6 +102,8 @@ public class Game extends JPanel implements KeyListener{
             }
         });
         add (controls);
+
+        repaint ();
     }
 
     private void showControls (){
@@ -153,6 +155,28 @@ public class Game extends JPanel implements KeyListener{
         controls2[2].setText ("LEFT - LEFT ARROW");
         controls2[3].setText ("RIGHT - RIGHT ARROW");
         controls2[4].setText ("SHOOT - ENTER");
+
+        JLabel info = new JLabel ("Info:");
+        info.setForeground (Color.WHITE);
+        info.setBounds (200, 370, 100, 100);
+        info.setFont (new Font ("Verdana", Font.BOLD, 30));
+        add (info);
+
+        JLabel[] infos = new JLabel[5];
+        y = 0;
+        for (int i = 0; i < 5; i++){
+            infos[i] = new JLabel ();
+            infos[i].setForeground (Color.WHITE);
+            infos[i].setBounds (200, 460 + 35 * y, 520, 20);
+            infos[i].setFont (new Font ("Verdana", Font.BOLD, 16));
+            add (infos[i]);
+            y++;
+        }
+        infos[0].setText ("Green Health Boxes - Heal 40 HP (Max: 150)");
+        infos[1].setText ("Purple Attack Buff Boxes - Increase Attack by 1 (Base: 10)");
+        infos[2].setText ("Critical Hit - 5% Chance; Deal x3 damage");
+        infos[3].setText ("Super Crit - 0.5% Chance; Deal x10 damage");
+        infos[4].setText ("Passive: Heal ~1.8 HP/s (Max: 150)");
 
         JButton back = new JButton ("BACK");
         back.setForeground (Color.BLACK);
@@ -221,6 +245,19 @@ public class Game extends JPanel implements KeyListener{
             }
         });
         add (pro);
+
+        JButton back = new JButton ("BACK");
+        back.setForeground (Color.BLACK);
+        back.setBackground (Color.WHITE);
+        back.setBounds (20, 20, 90, 25);
+        back.setFont (new Font ("Verdana", Font.BOLD, 15));
+        back.addActionListener (new ActionListener (){
+            @Override
+            public void actionPerformed (ActionEvent e){
+                intro ();
+            }
+        });
+        add (back);
 
         repaint ();
     }
