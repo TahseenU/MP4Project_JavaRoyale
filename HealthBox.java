@@ -1,17 +1,5 @@
-public class HealthBox{
-    private int x;
-    private int y;
-    
+public class HealthBox extends RandomSpawn{
     public HealthBox (){
-        x = (int) (Math.random () * 1321);
-        y = (int) (Math.random () * 661);
-    }
-
-    public int getX (){
-        return x;
-    }
-
-    public int getY (){
-        return y;
+        super (1321, 661);
     }
 }
