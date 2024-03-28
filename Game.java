@@ -64,8 +64,8 @@ public class Game extends JPanel implements KeyListener{
         cooldown = 200;
         x1 = 100;
         y1 = 100;
-        x2 = 1200;
-        y2 = 550;
+        x2 = 1204;
+        y2 = 532;
         keysPressed = new boolean[1000];
         walls = new Wall[3];
         walls[0] = new Wall (500, 300, 20, 150);
@@ -187,8 +187,8 @@ public class Game extends JPanel implements KeyListener{
         infos[1].setText ("Green Health Boxes - Heal 40 HP (Max: 150)");
         infos[2].setText ("Purple Buff Boxes - Increase Attack by 1 (Base: 10)");
         infos[3].setText ("Critical Hit - 5% Chance; Deal x2.5 damage");
-        infos[4].setText ("Super Crit - 0.5% Chance; Deal x10 damage");
-        infos[5].setText ("Passive: Heal ~1.8 HP/s (Max: 150)");
+        infos[4].setText ("Super Crit - 1% Chance; Deal x6 damage");
+        infos[5].setText ("Passive: Heal ~1 HP/s (Max: 150)");
 
         JButton back = new JButton ("BACK");
         back.setForeground (Color.BLACK);
@@ -253,7 +253,7 @@ public class Game extends JPanel implements KeyListener{
             @Override
             public void actionPerformed (ActionEvent e){
                 speed = 8;
-                pSpeed = 15;
+                pSpeed = 16;
                 play ();
             }
         });
@@ -297,8 +297,8 @@ public class Game extends JPanel implements KeyListener{
         timer = new Timer (10, new ActionListener (){
             @Override
             public void actionPerformed(ActionEvent e){
-                if (p1Health < 150) p1Health += 0.03;
-                if (p2Health < 150) p2Health += 0.03;
+                if (p1Health < 150) p1Health += 0.02;
+                if (p2Health < 150) p2Health += 0.02;
                 movePlayers ();     
                 movePellets ();
                 repaint ();
@@ -308,10 +308,10 @@ public class Game extends JPanel implements KeyListener{
                     else win (2);
                 }
                 else if (p2Health <= 0) win (1);
-                if (Math.random () <= 0.001){
+                if (Math.random () <= 0.001 && boxes.size () < 3){
                     boxes.add (new HealthBox ());
                 }
-                if (Math.random () <= 0.0005){
+                if (Math.random () <= 0.0005 && buffs.size () < 5){
                     buffs.add (new Buff ());
                 }
             }
@@ -524,10 +524,10 @@ public class Game extends JPanel implements KeyListener{
                             pellets.remove (i);
                             if (pellet.getTarget () == 2){
                                 if (Math.random () <= 0.05){
-                                    if (Math.random() <= 0.1){
-                                        p2Health -= (10 * p1Attack);
+                                    if (Math.random() <= 0.2){
+                                        p2Health -= (6 * p1Attack);
                                         p2Hit++;
-                                        p1Damage += 10 * p1Attack;
+                                        p1Damage += 6 * p1Attack;
                                         p1Super++;
                                         JLabel crit = new JLabel ("SUPER CRIT");
                                         crit.setFont (new Font ("Verdana", Font.BOLD, 16));
@@ -579,10 +579,10 @@ public class Game extends JPanel implements KeyListener{
                             }
                             else{
                                 if (Math.random () <= 0.05){
-                                    if (Math.random() <= 0.1){
-                                        p1Health -= (10 * p2Attack);
+                                    if (Math.random() <= 0.2){
+                                        p1Health -= (6 * p2Attack);
                                         p1Hit++;
-                                        p2Damage += 10 * p2Attack;
+                                        p2Damage += 6 * p2Attack;
                                         p2Super++;
                                         JLabel crit = new JLabel ("SUPER CRIT");
                                         crit.setFont (new Font ("Verdana", Font.BOLD, 16));
