@@ -3,8 +3,8 @@ public class RandomSpawn{
     private int y;
     
     public RandomSpawn (int xLim, int yLim){
-        x = (int) (Math.random () * xLim);
-        y = (int) (Math.random () * yLim);
+        x = (int) (Math.random () * xLim) + 20;
+        y = (int) (Math.random () * yLim) + 40;
     }
 
     public int getX (){

@@ -1,5 +1,5 @@
 public class Buff extends RandomSpawn{
     public Buff (){
-        super (1321, 671);
+        super (1291, 581);
     }
 }

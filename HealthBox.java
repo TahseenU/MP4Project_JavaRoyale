@@ -1,5 +1,5 @@
 public class HealthBox extends RandomSpawn{
     public HealthBox (){
-        super (1321, 661);
+        super (1286, 576);
     }
 }

@@ -8,7 +8,7 @@ public class Main{
         frame.getContentPane ().add (game);
         frame.pack ();
         frame.setLocationRelativeTo (null);
-        frame.setResizable (false);
+        frame.setResizable (true);
         frame.setVisible (true);
   }
 }
