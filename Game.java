@@ -193,7 +193,7 @@ public class Game extends JPanel implements KeyListener{
         }
         infos[0].setText ("Walls - Blocks pellets; Randomly teleports player when touched");
         infos[1].setText ("Green Health Boxes - Heal 40 HP (Max: 150)");
-        infos[2].setText ("Purple Buff Boxes - Increase Attack by 1, 2, or 3 (Base: 10)");
+        infos[2].setText ("Purple Buff Boxes - Randomly Increase Attack by 1, 2, or 3 (Base: 10)");
         infos[3].setText ("Critical Hit - 5% Chance; Deal x2.5 damage");
         infos[4].setText ("Super Crit - 1% Chance; Deal x6 damage");
         infos[5].setText ("Passive: Heal ~1 HP/s (Max: 150)");
@@ -496,7 +496,7 @@ public class Game extends JPanel implements KeyListener{
         }
     }
 
-    private void movePellets(){
+    private void movePellets (){
         int xTar;
         int yTar;
         for (int i = 0; i < pellets.size (); i++){
@@ -518,7 +518,7 @@ public class Game extends JPanel implements KeyListener{
                 for (int j = 0; j < wallY.length; j++) wallY[j] = j + wall.getY() - 6;
                 for (int j = 0; j < wallX.length; j++){
                     for (int k = 0; k < wallY.length; k++){
-                        if (wallX[j] == pellet.getX() && wallY[k] == pellet.getY()){
+                        if (wallX[j] == pellet.getX () && wallY[k] == pellet.getY()){
                             pellets.remove (i);
                             i--;
                         }
@@ -526,10 +526,10 @@ public class Game extends JPanel implements KeyListener{
                 }
             }
 
-            int[] xTargets = new int[57];
-            int[] yTargets = new int[58];
-            for (int j = 0; j < xTargets.length; j++) xTargets[j] = j + xTar - 6;
-            for (int j = 0; j < yTargets.length; j++) yTargets[j] = j + yTar - 7;
+            int[] xTargets = new int[50 + pellet.getSize () + 2];
+            int[] yTargets = new int[50 + pellet.getSize () + 2];
+            for (int j = 0; j < xTargets.length; j++) xTargets[j] = j + xTar - pellet.getSize () - 1;
+            for (int j = 0; j < yTargets.length; j++) yTargets[j] = j + yTar - pellet.getSize () - 1;
 
             if (pellet.getX () < 0 || pellet.getX () >= getWidth () || pellet.getY () < 0 || pellet.getY () >= getHeight ()){
                 pellets.remove (i);
@@ -680,7 +680,7 @@ public class Game extends JPanel implements KeyListener{
             for (Pellet pellet : pellets){
                 if (pellet.getTarget () == 2) g2d.setColor (Color.BLUE);
                 else g2d.setColor (Color.RED);
-                g2d.fillRect ((int) pellet.getX (), (int) pellet.getY (), 6, 6);
+                g2d.fillRect ((int) pellet.getX (), (int) pellet.getY (), pellet.getSize (), pellet.getSize ());
             }
             for (HealthBox box : boxes){
                 g2d.setColor (Color.GREEN);
@@ -705,7 +705,14 @@ public class Game extends JPanel implements KeyListener{
             if (time - cd1 >= cooldown){
                 p1Fired++;
                 cd1 = time;
-                pellets.add (new Pellet(x1, y1, x2, y2, 6, pSpeed, 2));
+                pellets.add (new Pellet (x1, y1, x2, y2, 6, pSpeed, 2));
+            }
+        }
+        if (e.getKeyCode () == KeyEvent.VK_T){
+            if (time - cd1 >= cooldown){
+                p1Fired++;
+                cd1 = time;
+                pellets.add (new Pellet (x1, y1, x2, y2, 20, pSpeed, 2));
             }
         }
         if (e.getKeyCode () == KeyEvent.VK_ENTER){
