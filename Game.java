@@ -23,6 +23,8 @@ public class Game extends JPanel implements KeyListener{
     private int cooldown;
     private long cd1;
     private long cd2;
+    private long scd1;
+    private long scd2;
     private boolean[] keysPressed;
     private Wall[] walls;
     private ArrayList<Pellet> pellets;
@@ -501,6 +503,8 @@ public class Game extends JPanel implements KeyListener{
         int yTar;
         for (int i = 0; i < pellets.size (); i++){
             Pellet pellet = pellets.get (i);
+            int damageMult = 1;
+            if (pellet.getSize () == 20) damageMult = 4;
             if (pellet.getTarget () == 2){
                 xTar = x2;
                 yTar = y2;
@@ -526,10 +530,10 @@ public class Game extends JPanel implements KeyListener{
                 }
             }
 
-            int[] xTargets = new int[50 + pellet.getSize () + 2];
-            int[] yTargets = new int[50 + pellet.getSize () + 2];
-            for (int j = 0; j < xTargets.length; j++) xTargets[j] = j + xTar - pellet.getSize () - 1;
-            for (int j = 0; j < yTargets.length; j++) yTargets[j] = j + yTar - pellet.getSize () - 1;
+            int[] xTargets = new int[40 + pellet.getSize ()];
+            int[] yTargets = new int[40 + pellet.getSize ()];
+            for (int j = 0; j < xTargets.length; j++) xTargets[j] = j + xTar - pellet.getSize () + 2;
+            for (int j = 0; j < yTargets.length; j++) yTargets[j] = j + yTar - pellet.getSize () + 2;
 
             if (pellet.getX () < 0 || pellet.getX () >= getWidth () || pellet.getY () < 0 || pellet.getY () >= getHeight ()){
                 pellets.remove (i);
@@ -543,9 +547,9 @@ public class Game extends JPanel implements KeyListener{
                             if (pellet.getTarget () == 2){
                                 if (Math.random () <= 0.05){
                                     if (Math.random() <= 0.2){
-                                        p2Health -= (6 * p1Attack);
+                                        p2Health -= (6 * p1Attack * damageMult);
                                         p2Hit++;
-                                        p1Damage += 6 * p1Attack;
+                                        p1Damage += 6 * p1Attack * damageMult;
                                         p1Super++;
                                         JLabel crit = new JLabel ("SUPER CRIT");
                                         crit.setFont (new Font ("Verdana", Font.BOLD, 16));
@@ -566,9 +570,9 @@ public class Game extends JPanel implements KeyListener{
                                         add (crit);
                                     }
                                     else{
-                                        p2Health -= (2.5 * p1Attack);
+                                        p2Health -= (2.5 * p1Attack * damageMult);
                                         p2Hit++;
-                                        p1Damage += 2.5 * p1Attack;
+                                        p1Damage += 2.5 * p1Attack * damageMult;
                                         p1Crits++;
                                         JLabel crit = new JLabel ("CRITICAL HIT");
                                         crit.setFont (new Font ("Verdana", Font.BOLD, 13));
@@ -590,17 +594,17 @@ public class Game extends JPanel implements KeyListener{
                                     }
                                 }
                                 else{
-                                    p2Health -= p1Attack;
+                                    p2Health -= p1Attack * damageMult;
                                     p2Hit++;
-                                    p1Damage += p1Attack;
+                                    p1Damage += p1Attack * damageMult;
                                 }
                             }
                             else{
                                 if (Math.random () <= 0.05){
                                     if (Math.random() <= 0.2){
-                                        p1Health -= (6 * p2Attack);
+                                        p1Health -= (6 * p2Attack * damageMult);
                                         p1Hit++;
-                                        p2Damage += 6 * p2Attack;
+                                        p2Damage += 6 * p2Attack * damageMult;
                                         p2Super++;
                                         JLabel crit = new JLabel ("SUPER CRIT");
                                         crit.setFont (new Font ("Verdana", Font.BOLD, 16));
@@ -621,9 +625,9 @@ public class Game extends JPanel implements KeyListener{
                                         add (crit);
                                     }
                                     else{
-                                        p1Health -= (2.5 * p2Attack);
+                                        p1Health -= (2.5 * p2Attack * damageMult);
                                         p1Hit++;
-                                        p2Damage += 2.5 * p2Attack;
+                                        p2Damage += 2.5 * p2Attack * damageMult;
                                         p2Crits++;
                                         JLabel crit = new JLabel ("CRITICAL HIT");
                                         crit.setFont (new Font ("Verdana", Font.BOLD, 13));
@@ -645,9 +649,9 @@ public class Game extends JPanel implements KeyListener{
                                     }
                                 }
                                 else{
-                                    p1Health -= p2Attack;
+                                    p1Health -= p2Attack * damageMult;
                                     p1Hit++;
-                                    p2Damage += p2Attack;
+                                    p2Damage += p2Attack * damageMult;
                                 }
                             }
                             i--;
@@ -709,9 +713,9 @@ public class Game extends JPanel implements KeyListener{
             }
         }
         if (e.getKeyCode () == KeyEvent.VK_T){
-            if (time - cd1 >= cooldown){
+            if (time - scd1 >= cooldown * 5){
                 p1Fired++;
-                cd1 = time;
+                scd1 = time;
                 pellets.add (new Pellet (x1, y1, x2, y2, 20, pSpeed, 2));
             }
         }
