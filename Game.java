@@ -145,12 +145,12 @@ public class Game extends JPanel implements KeyListener{
         p2.setFont (new Font ("Verdana", Font.BOLD, 30));
         add (p2);
 
-        JLabel[] controls1 = new JLabel[5];
+        JLabel[] controls1 = new JLabel[6];
         int y = 1;
-        for (int i = 0; i < 5; i++){
+        for (int i = 0; i < 6; i++){
             controls1[i] = new JLabel ();
             controls1[i].setForeground (Color.BLUE);
-            controls1[i].setBounds (200, 30 + 50 * y, 200, 100);
+            controls1[i].setBounds (200, 25 + 50 * y, 200, 100);
             controls1[i].setFont (new Font ("Verdana", Font.BOLD, 20));
             add (controls1[i]);
             y++;
@@ -160,10 +160,11 @@ public class Game extends JPanel implements KeyListener{
         controls1[2].setText ("LEFT - A");
         controls1[3].setText ("RIGHT - D");
         controls1[4].setText ("SHOOT - R");
+        controls1[5].setText ("MEGA SHOT - T");
 
-        JLabel[] controls2 = new JLabel[5];
+        JLabel[] controls2 = new JLabel[6];
         y = 1;
-        for (int i = 0; i < 5; i++){
+        for (int i = 0; i < 6; i++){
             controls2[i] = new JLabel ();
             controls2[i].setForeground (Color.RED);
             controls2[i].setBounds (850, 25 + 50 * y, 300, 100);
@@ -175,11 +176,12 @@ public class Game extends JPanel implements KeyListener{
         controls2[1].setText ("DOWN - DOWN ARROW");
         controls2[2].setText ("LEFT - LEFT ARROW");
         controls2[3].setText ("RIGHT - RIGHT ARROW");
-        controls2[4].setText ("SHOOT - ENTER");
+        controls2[4].setText ("SHOOT - NUMPAD 1");
+        controls2[5].setText ("MEGA SHOT - NUMPAD 2");
 
         JLabel info = new JLabel ("Info:");
         info.setForeground (Color.WHITE);
-        info.setBounds (200, 370, 100, 100);
+        info.setBounds (200, 385, 100, 100);
         info.setFont (new Font ("Verdana", Font.BOLD, 30));
         add (info);
 
@@ -188,17 +190,17 @@ public class Game extends JPanel implements KeyListener{
         for (int i = 0; i < 6; i++){
             infos[i] = new JLabel ();
             infos[i].setForeground (Color.WHITE);
-            infos[i].setBounds (200, 460 + 35 * y, 700, 20);
+            infos[i].setBounds (200, 465 + 35 * y, 700, 20);
             infos[i].setFont (new Font ("Verdana", Font.BOLD, 16));
             add (infos[i]);
             y++;
         }
-        infos[0].setText ("Walls - Blocks pellets; Randomly teleports player when touched");
+        infos[0].setText ("Walls - Blocks pellets; Randomly teleports players");
         infos[1].setText ("Green Health Boxes - Heal 40 HP (Max: 150)");
         infos[2].setText ("Purple Buff Boxes - Randomly Increase Attack by 1, 2, or 3 (Base: 10)");
         infos[3].setText ("Critical Hit - 5% Chance; Deal x2.5 damage");
         infos[4].setText ("Super Crit - 1% Chance; Deal x6 damage");
-        infos[5].setText ("Passive: Heal ~1 HP/s (Max: 150)");
+        infos[5].setText ("Passive: Heal ~2 HP/s (Max: 150)");
 
         JButton back = new JButton ("BACK");
         back.setForeground (Color.BLACK);
@@ -307,8 +309,8 @@ public class Game extends JPanel implements KeyListener{
         timer = new Timer (10, new ActionListener (){
             @Override
             public void actionPerformed(ActionEvent e){
-                if (p1Health < 150) p1Health += 0.02;
-                if (p2Health < 150) p2Health += 0.02;
+                if (p1Health < 150) p1Health += 0.035;
+                if (p2Health < 150) p2Health += 0.035;
                 movePlayers ();     
                 movePellets ();
                 repaint ();
@@ -318,10 +320,10 @@ public class Game extends JPanel implements KeyListener{
                     else win (2);
                 }
                 else if (p2Health <= 0) win (1);
-                if (Math.random () <= 0.001 && boxes.size () < 3){
+                if (Math.random () <= 0.0015 && boxes.size () < 3){
                     boxes.add (new HealthBox ());
                 }
-                if (Math.random () <= 0.0005 && buffs.size () < 5){
+                if (Math.random () <= 0.00075 && buffs.size () < 5){
                     buffs.add (new Buff ());
                 }
             }
@@ -713,17 +715,24 @@ public class Game extends JPanel implements KeyListener{
             }
         }
         if (e.getKeyCode () == KeyEvent.VK_T){
-            if (time - scd1 >= cooldown * 5){
+            if (time - scd1 >= cooldown * 10){
                 p1Fired++;
                 scd1 = time;
                 pellets.add (new Pellet (x1, y1, x2, y2, 20, pSpeed, 2));
             }
         }
-        if (e.getKeyCode () == KeyEvent.VK_ENTER){
+        if (e.getKeyCode () == KeyEvent.VK_NUMPAD1){
             if (time - cd2 >= cooldown){
                 p2Fired++;
                 cd2 = time;
                 pellets.add (new Pellet (x2, y2, x1, y1, 6, pSpeed, 1));
+            }
+        }
+        if (e.getKeyCode () == KeyEvent.VK_NUMPAD2){
+            if (time - scd2 >= cooldown * 10){
+                p2Fired++;
+                scd2 = time;
+                pellets.add (new Pellet (x2, y2, x1, y1, 20, pSpeed, 1));
             }
         }
         if (won && e.getKeyCode () == KeyEvent.VK_SPACE){
