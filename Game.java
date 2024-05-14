@@ -61,8 +61,8 @@ public class Game extends JPanel implements KeyListener{
         boxes = new ArrayList<> ();
         buffs = new ArrayList<> ();
         won = false;
-        p1Health = 150;
-        p2Health = 150;
+        p1Health = 200;
+        p2Health = 200;
         p1Attack = 10;
         p2Attack = 10;
         speed = 5;
@@ -185,22 +185,23 @@ public class Game extends JPanel implements KeyListener{
         info.setFont (new Font ("Verdana", Font.BOLD, 30));
         add (info);
 
-        JLabel[] infos = new JLabel[6];
+        JLabel[] infos = new JLabel[7];
         y = 0;
-        for (int i = 0; i < 6; i++){
+        for (int i = 0; i < 7; i++){
             infos[i] = new JLabel ();
             infos[i].setForeground (Color.WHITE);
-            infos[i].setBounds (200, 465 + 35 * y, 700, 20);
+            infos[i].setBounds (200, 465 + 30 * y, 700, 20);
             infos[i].setFont (new Font ("Verdana", Font.BOLD, 16));
             add (infos[i]);
             y++;
         }
-        infos[0].setText ("Walls - Blocks pellets; Randomly teleports players");
+        infos[0].setText ("Walls - Blocks pellets (Cannot block mega pellets); Randomly teleports players");
         infos[1].setText ("Green Health Boxes - Heal 40 HP (Max: 150)");
         infos[2].setText ("Purple Buff Boxes - Randomly Increase Attack by 1, 2, or 3 (Base: 10)");
         infos[3].setText ("Critical Hit - 5% Chance; Deal x2.5 damage");
         infos[4].setText ("Super Crit - 1% Chance; Deal x6 damage");
-        infos[5].setText ("Passive: Heal ~2 HP/s (Max: 150)");
+        infos[5].setText ("Passive: Heal ~2 HP/s (Max: 200)");
+        infos[6].setText ("Mega Shot - Deals 4x dmg; 5 sec cooldown; Moves at 3x speed");
 
         JButton back = new JButton ("BACK");
         back.setForeground (Color.BLACK);
@@ -309,8 +310,8 @@ public class Game extends JPanel implements KeyListener{
         timer = new Timer (10, new ActionListener (){
             @Override
             public void actionPerformed(ActionEvent e){
-                if (p1Health < 150) p1Health += 0.035;
-                if (p2Health < 150) p2Health += 0.035;
+                if (p1Health < 200) p1Health += 0.035;
+                if (p2Health < 200) p2Health += 0.035;
                 movePlayers ();     
                 movePellets ();
                 repaint ();
@@ -388,7 +389,7 @@ public class Game extends JPanel implements KeyListener{
                             hTimer.start ();
                             add (health);
 
-                            if (p1Health > 150) p1Health = 150;
+                            if (p1Health > 200) p1Health = 200;
                             boxes.remove (i);
                         }
                     }
@@ -421,7 +422,7 @@ public class Game extends JPanel implements KeyListener{
                             hTimer.start ();
                             add (health);
 
-                            if (p2Health > 150) p2Health = 150;
+                            if (p2Health > 200) p2Health = 200;
                             boxes.remove (i);
                         }
                     }
@@ -524,7 +525,7 @@ public class Game extends JPanel implements KeyListener{
                 for (int j = 0; j < wallY.length; j++) wallY[j] = j + wall.getY() - 6;
                 for (int j = 0; j < wallX.length; j++){
                     for (int k = 0; k < wallY.length; k++){
-                        if (wallX[j] == pellet.getX () && wallY[k] == pellet.getY()){
+                        if (wallX[j] == pellet.getX () && wallY[k] == pellet.getY() && pellet.getSize () == 6){
                             pellets.remove (i);
                             i--;
                         }
@@ -681,8 +682,8 @@ public class Game extends JPanel implements KeyListener{
             g2d.fillRect (x1 - 1, y1 - 11, 59, 11);
             g2d.fillRect (x2 - 1, y2 - 11, 59, 11);
             g2d.setColor (new Color (255, 0, 255));
-            g2d.fillRect (x1 + 1, y1 - 9, (int) (p1Health / 3 * 1.1), 7);
-            g2d.fillRect (x2 + 1, y2 - 9, (int) (p2Health / 3 * 1.1), 7);
+            g2d.fillRect (x1 + 1, y1 - 9, (int) (p1Health / 4 * 1.1), 7);
+            g2d.fillRect (x2 + 1, y2 - 9, (int) (p2Health / 4 * 1.1), 7);
             for (Pellet pellet : pellets){
                 if (pellet.getTarget () == 2) g2d.setColor (Color.BLUE);
                 else g2d.setColor (Color.RED);
@@ -718,7 +719,7 @@ public class Game extends JPanel implements KeyListener{
             if (time - scd1 >= cooldown * 10){
                 p1Fired++;
                 scd1 = time;
-                pellets.add (new Pellet (x1, y1, x2, y2, 20, pSpeed, 2));
+                pellets.add (new Pellet (x1, y1, x2, y2, 20, pSpeed * 3, 2));
             }
         }
         if (e.getKeyCode () == KeyEvent.VK_NUMPAD1){
@@ -732,14 +733,14 @@ public class Game extends JPanel implements KeyListener{
             if (time - scd2 >= cooldown * 10){
                 p2Fired++;
                 scd2 = time;
-                pellets.add (new Pellet (x2, y2, x1, y1, 20, pSpeed, 1));
+                pellets.add (new Pellet (x2, y2, x1, y1, 20, pSpeed * 3, 1));
             }
         }
         if (won && e.getKeyCode () == KeyEvent.VK_SPACE){
             won = false;
             playing = false;
-            p1Health = 150;
-            p2Health = 150;
+            p1Health = 200;
+            p2Health = 200;
             p1Attack = 10;
             p2Attack = 10;
             x1 = 100;
