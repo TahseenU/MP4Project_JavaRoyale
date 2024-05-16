@@ -829,7 +829,7 @@ public class Game extends JPanel implements KeyListener{
         }
         stats[0][0].setText ("Pellets Fired: " + p1Fired);
         stats[0][1].setText ("Accuracy: " + ((int) ((double)p2Hit / p1Fired * 100)) + "%");
-        if ((int)((double) p2Hit / p1Fired * 100) == 0) stats[0][1].setText ("Accuracy: N/A");
+        if (p1Fired == 0) stats[0][1].setText ("Accuracy: N/A");
         stats[0][2].setText ("Attack: " + p1Attack);
         stats[0][3].setText ("Damage Dealt: " + p1Damage);
         stats[0][4].setText ("Health Boxes Collected: " + p1Heals);
@@ -840,7 +840,7 @@ public class Game extends JPanel implements KeyListener{
 
         stats[1][0].setText ("Pellets Fired: " + p2Fired);
         stats[1][1].setText ("Accuracy: " + ((int)((double)p1Hit / p2Fired * 100)) + "%");
-        if ((int)((double)p1Hit / p2Fired * 100) == 0) stats[1][1].setText ("Accuracy: N/A");
+        if (p2Fired == 0) stats[1][1].setText ("Accuracy: N/A");
         stats[1][2].setText ("Attack: " + p2Attack);
         stats[1][3].setText ("Damage Dealt: " + p2Damage);
         stats[1][4].setText ("Health Boxes Collected: " + p2Heals);
