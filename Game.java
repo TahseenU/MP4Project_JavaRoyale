@@ -190,7 +190,7 @@ public class Game extends JPanel implements KeyListener{
         for (int i = 0; i < 7; i++){
             infos[i] = new JLabel ();
             infos[i].setForeground (Color.WHITE);
-            infos[i].setBounds (200, 465 + 30 * y, 700, 20);
+            infos[i].setBounds (200, 465 + 30 * y, 1000, 20);
             infos[i].setFont (new Font ("Verdana", Font.BOLD, 16));
             add (infos[i]);
             y++;
@@ -201,7 +201,7 @@ public class Game extends JPanel implements KeyListener{
         infos[3].setText ("Critical Hit - 5% Chance; Deal x2.5 damage");
         infos[4].setText ("Super Crit - 1% Chance; Deal x6 damage");
         infos[5].setText ("Passive: Heal ~2 HP/s (Max: 200)");
-        infos[6].setText ("Mega Shot - Deals 4x dmg; 5 sec cooldown; Moves at 3x speed");
+        infos[6].setText ("Mega Shot - Larger Pellets that deal 5x dmg; 4 sec cooldown; Moves at 4x speed");
 
         JButton back = new JButton ("BACK");
         back.setForeground (Color.BLACK);
@@ -507,7 +507,7 @@ public class Game extends JPanel implements KeyListener{
         for (int i = 0; i < pellets.size (); i++){
             Pellet pellet = pellets.get (i);
             int damageMult = 1;
-            if (pellet.getSize () == 20) damageMult = 4;
+            if (pellet.getSize () > 6) damageMult = 5;
             if (pellet.getTarget () == 2){
                 xTar = x2;
                 yTar = y2;
@@ -716,10 +716,10 @@ public class Game extends JPanel implements KeyListener{
             }
         }
         if (e.getKeyCode () == KeyEvent.VK_T){
-            if (time - scd1 >= cooldown * 10){
+            if (time - scd1 >= cooldown * 20){
                 p1Fired++;
                 scd1 = time;
-                pellets.add (new Pellet (x1, y1, x2, y2, 20, pSpeed * 3, 2));
+                pellets.add (new Pellet (x1, y1, x2, y2, 20, pSpeed * 4, 2));
             }
         }
         if (e.getKeyCode () == KeyEvent.VK_NUMPAD1){
@@ -730,10 +730,10 @@ public class Game extends JPanel implements KeyListener{
             }
         }
         if (e.getKeyCode () == KeyEvent.VK_NUMPAD2){
-            if (time - scd2 >= cooldown * 10){
+            if (time - scd2 >= cooldown * 20){
                 p2Fired++;
                 scd2 = time;
-                pellets.add (new Pellet (x2, y2, x1, y1, 20, pSpeed * 3, 1));
+                pellets.add (new Pellet (x2, y2, x1, y1, 20, pSpeed * 4, 1));
             }
         }
         if (won && e.getKeyCode () == KeyEvent.VK_SPACE){
