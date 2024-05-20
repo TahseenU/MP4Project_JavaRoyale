@@ -3,6 +3,7 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -57,6 +58,19 @@ public class Game extends JPanel implements KeyListener{
     private int p2Buffs;
 
     public Game (){
+        keysPressed = new boolean[1000];
+        walls = new Wall[3];
+        walls[0] = new Wall (500, 300, 20, 150);
+        walls[1] = new Wall (1099, 250, 200, 30);
+        walls[2] = new Wall (200, 650, 100, 25);
+        setPreferredSize (new Dimension (1355, 685));
+        setBackground (new Color (50, 200, 100));
+        setFocusable (true);
+        addKeyListener (this);
+        intro ();
+    }
+
+    private void intro (){
         pellets = new ArrayList<> ();
         boxes = new ArrayList<> ();
         buffs = new ArrayList<> ();
@@ -76,24 +90,11 @@ public class Game extends JPanel implements KeyListener{
         p2Heals = 0;
         p1Buffs = 0;
         p2Buffs = 0;
-        keysPressed = new boolean[1000];
-        walls = new Wall[3];
-        walls[0] = new Wall (500, 300, 20, 150);
-        walls[1] = new Wall (1099, 250, 200, 30);
-        walls[2] = new Wall (200, 650, 100, 25);
-        setPreferredSize (new Dimension (1355, 685));
-        setBackground (new Color (50, 200, 100));
-        setFocusable (true);
-        addKeyListener (this);
-        intro ();
-    }
-
-    private void intro (){
         removeAll ();
         setBackground (new Color (50, 200, 100));
         JLabel intro = new JLabel ("Java Royale");
         intro.setFont (new Font ("Verdana", Font.BOLD, 70));
-        intro.setBounds (450, 175, 700, 100);
+        intro.setBounds (440, 175, 700, 100);
         intro.setForeground (Color.RED);
         setLayout (null);
         add (intro);
@@ -195,13 +196,13 @@ public class Game extends JPanel implements KeyListener{
             add (infos[i]);
             y++;
         }
-        infos[0].setText ("Walls - Blocks pellets (Cannot block mega pellets); Randomly teleports players");
+        infos[0].setText ("Walls - Blocks pellets (Cannot block mega pellets)");
         infos[1].setText ("Green Health Boxes - Heal 40 HP (Max: 150)");
         infos[2].setText ("Purple Buff Boxes - Randomly Increase Attack by 1, 2, or 3 (Base: 10)");
         infos[3].setText ("Critical Hit - 5% Chance; Deal x2.5 damage");
         infos[4].setText ("Super Crit - 1% Chance; Deal x6 damage");
         infos[5].setText ("Passive: Heal ~2 HP/s (Max: 200)");
-        infos[6].setText ("Mega Shot - Larger Pellets that deal 5x dmg; 4 sec cooldown; Moves at 4x speed");
+        infos[6].setText ("Mega Shot - Larger Pellets that deal 5x dmg; 4 sec cooldown; Moves at 3.5x speed");
 
         JButton back = new JButton ("BACK");
         back.setForeground (Color.BLACK);
@@ -330,37 +331,61 @@ public class Game extends JPanel implements KeyListener{
             }
         });
         timer.start ();
-    }    
+    }
+
+    // WORK HERE
+    private boolean checkRight (int x, int y, Wall w){
+        Rectangle p = new Rectangle (x, y, 50, 50);
+        Rectangle wall = new Rectangle (w.getX(), w.getY(), w.getWidth(), w.getHeight ());
+        if (p.intersects (wall) && x >)
+        return true;
+    }
 
     private void movePlayers() {
+        // Rectangle a = new Rectangle (x1, x2, 50, 50);
+        // Rectangle b = new Rectangle (x2, y2, 50, 50);
+        // Rectangle w1 = new Rectangle (walls[0].getX (), walls[0].getY(), walls[0].getWidth(), walls[0].getHeight());
+        // Rectangle w2 = new Rectangle (walls[1].getX (), walls[1].getY(), walls[1].getWidth(), walls[1].getHeight());
+        // Rectangle w3 = new Rectangle (walls[2].getX (), walls[2].getY(), walls[2].getWidth(), walls[2].getHeight());
+        // double speed1 = speed;
+        // double speed2 = speed;
+        // if (a.intersects (w1) || a.intersects(w2) || a.intersects(w3)) speed1 *= -1;
+        // if (b.intersects (w1) || b.intersects(w2) || b.intersects(w3)) speed2 *= -1;
+        boolean right1 = true;
+        boolean right2 = true;
+        for (Wall w : walls){
+            right1 = checkRight (x1, y1, w);
+            right2 = checkRight (x2, y2, w);
+        }
+
         if (keysPressed[KeyEvent.VK_W]) if (!(y1 <= 0)) y1 -= speed;
         if (keysPressed[KeyEvent.VK_A]) if (!(x1 <= 0)) x1 -= speed;
         if (keysPressed[KeyEvent.VK_S]) if (!(y1 >= 635)) y1 += speed;
-        if (keysPressed[KeyEvent.VK_D]) if (!(x1 >= 1305)) x1 += speed;
+        if (keysPressed[KeyEvent.VK_D] && right1) if (!(x1 >= 1305)) x1 += speed;
 
         if (keysPressed[KeyEvent.VK_UP]) if (!(y2 <= 0)) y2 -= speed;
         if (keysPressed[KeyEvent.VK_LEFT]) if (!(x2 <= 0)) x2 -= speed;
         if (keysPressed[KeyEvent.VK_DOWN]) if (!(y2 >= 635)) y2 += speed;
-        if (keysPressed[KeyEvent.VK_RIGHT]) if (!(x2 >= 1305)) x2 += speed;
+        if (keysPressed[KeyEvent.VK_RIGHT] && right2) if (!(x2 >= 1305)) x2 += speed;
 
-        for (Wall wall : walls){
-            int[] wallX = new int[wall.getWidth() + 49];
-            int[] wallY = new int[wall.getHeight() + 49];
-            for (int j = 0; j < wallX.length; j++) wallX[j] = j + wall.getX() - 49;
-            for (int j = 0; j < wallY.length; j++) wallY[j] = j + wall.getY() - 49;
-            for (int j = 0; j < wallX.length; j++){
-                for (int k = 0; k < wallY.length; k++){
-                    if (wallX[j] == x1 && wallY[k] == y1){
-                        x1 = (int) (Math.random () * 1300);
-                        y1 = (int) (Math.random () * 635);
-                    }
-                    if (wallX[j] == x2 && wallY[k] == y2){
-                        x2 = (int) (Math.random () * 1300);
-                        y2 = (int) (Math.random () * 635);
-                    }
-                }
-            }
-        }
+        // for (Wall wall : walls){
+        //     int[] wallX = new int[wall.getWidth() + 49];
+        //     int[] wallY = new int[wall.getHeight() + 49];
+        //     for (int j = 0; j < wallX.length; j++) wallX[j] = j + wall.getX() - 49;
+        //     for (int j = 0; j < wallY.length; j++) wallY[j] = j + wall.getY() - 49;
+        //     for (int j = 0; j < wallX.length; j++){
+        //         for (int k = 0; k < wallY.length; k++){
+        //             if (wallX[j] == x1 && wallY[k] == y1){
+        //                 x1 = (int) (Math.random () * 1300);
+        //                 y1 = (int) (Math.random () * 635);
+        //             }
+        //             if (wallX[j] == x2 && wallY[k] == y2){
+        //                 x2 = (int) (Math.random () * 1300);
+        //                 y2 = (int) (Math.random () * 635);
+        //             }
+        //         }
+        //     }
+        // }
 
         if (boxes.size() > 0){
             for (int i = boxes.size()-1; i >= 0; i--){
@@ -719,7 +744,7 @@ public class Game extends JPanel implements KeyListener{
             if (time - scd1 >= cooldown * 20){
                 p1Fired++;
                 scd1 = time;
-                pellets.add (new Pellet (x1, y1, x2, y2, 20, pSpeed * 4, 2));
+                pellets.add (new Pellet (x1, y1, x2, y2, 20, pSpeed * 3.5, 2));
             }
         }
         if (e.getKeyCode () == KeyEvent.VK_NUMPAD1){
@@ -733,33 +758,12 @@ public class Game extends JPanel implements KeyListener{
             if (time - scd2 >= cooldown * 20){
                 p2Fired++;
                 scd2 = time;
-                pellets.add (new Pellet (x2, y2, x1, y1, 20, pSpeed * 4, 1));
+                pellets.add (new Pellet (x2, y2, x1, y1, 20, pSpeed * 3.5, 1));
             }
         }
         if (won && e.getKeyCode () == KeyEvent.VK_SPACE){
             won = false;
             playing = false;
-            p1Health = 200;
-            p2Health = 200;
-            p1Attack = 10;
-            p2Attack = 10;
-            x1 = 100;
-            y1 = 100;
-            x2 = 1200;
-            y2 = 550;
-            p1Fired = 0;
-            p1Hit = 0;
-            p1Damage = 0;
-            p1Heals = 0;
-            p1Buffs = 0;
-            p2Fired = 0;
-            p2Hit = 0;
-            p2Damage = 0;
-            p2Heals = 0;
-            p2Buffs = 0;
-            pellets = new ArrayList<> ();
-            boxes = new ArrayList<> ();
-            buffs = new ArrayList<> ();
             intro ();
             repaint ();
         }
