@@ -333,59 +333,74 @@ public class Game extends JPanel implements KeyListener{
         timer.start ();
     }
 
-    // WORK HERE
-    private boolean checkRight (int x, int y, Wall w){
-        Rectangle p = new Rectangle (x, y, 50, 50);
-        Rectangle wall = new Rectangle (w.getX(), w.getY(), w.getWidth(), w.getHeight ());
-        if (p.intersects (wall) && x >)
+    private boolean checkRight (int x, int y, Wall wall){
+        if (x + 56 > wall.getX() && x + 50 < wall.getX () + wall.getWidth () && y + 50 > wall.getY () && y < wall.getY () + wall.getHeight ()) return false;
+        return true;
+    }
+    private boolean checkLeft (int x, int y, Wall wall){
+        if (x < wall.getX() + wall.getWidth () + 4 && x > wall.getX () && y + 50 > wall.getY () && y < wall.getY () + wall.getHeight ()) return false;
+        return true;
+    }
+    private boolean checkDown (int x, int y, Wall wall){
+        if (y + 50 > wall.getY() && y + 50 < wall.getY () + wall.getHeight () && x + 50 > wall.getX () && x < wall.getX () + wall.getWidth ()) return false;
+        return true;
+    }
+    private boolean checkUp (int x, int y, Wall wall){
+        if (y < wall.getY() + wall.getHeight () && y > wall.getY () && x + 50 > wall.getX () && x < wall.getX () + wall.getWidth ()) return false;
         return true;
     }
 
     private void movePlayers() {
-        // Rectangle a = new Rectangle (x1, x2, 50, 50);
-        // Rectangle b = new Rectangle (x2, y2, 50, 50);
-        // Rectangle w1 = new Rectangle (walls[0].getX (), walls[0].getY(), walls[0].getWidth(), walls[0].getHeight());
-        // Rectangle w2 = new Rectangle (walls[1].getX (), walls[1].getY(), walls[1].getWidth(), walls[1].getHeight());
-        // Rectangle w3 = new Rectangle (walls[2].getX (), walls[2].getY(), walls[2].getWidth(), walls[2].getHeight());
-        // double speed1 = speed;
-        // double speed2 = speed;
-        // if (a.intersects (w1) || a.intersects(w2) || a.intersects(w3)) speed1 *= -1;
-        // if (b.intersects (w1) || b.intersects(w2) || b.intersects(w3)) speed2 *= -1;
         boolean right1 = true;
         boolean right2 = true;
+        boolean left1 = true;
+        boolean left2 = true;
+        boolean down1 = true;
+        boolean down2 = true;
+        boolean up1 = true;
+        boolean up2 = true;
         for (Wall w : walls){
             right1 = checkRight (x1, y1, w);
+            if (!(right1)) break;
+        }
+        for (Wall w : walls){
             right2 = checkRight (x2, y2, w);
+            if (!(right2)) break;
+        }
+        for (Wall w : walls){
+            left1 = checkLeft (x1, y1, w);
+            if (!(left1)) break;
+        }
+        for (Wall w : walls){
+            left2 = checkLeft (x2, y2, w);
+            if (!(left2)) break;
+        }
+        for (Wall w : walls){
+            down1 = checkDown (x1, y1, w);
+            if (!(down1)) break;
+        }
+        for (Wall w : walls){
+            down2 = checkDown (x2, y2, w);
+            if (!(down2)) break;
+        }
+        for (Wall w : walls){
+            up1 = checkUp (x1, y1, w);
+            if (!(up1)) break;
+        }
+        for (Wall w : walls){
+            up2 = checkUp (x2, y2, w);
+            if (!(up2)) break;
         }
 
-        if (keysPressed[KeyEvent.VK_W]) if (!(y1 <= 0)) y1 -= speed;
-        if (keysPressed[KeyEvent.VK_A]) if (!(x1 <= 0)) x1 -= speed;
-        if (keysPressed[KeyEvent.VK_S]) if (!(y1 >= 635)) y1 += speed;
+        if (keysPressed[KeyEvent.VK_W] && up1) if (!(y1 <= 0)) y1 -= speed;
+        if (keysPressed[KeyEvent.VK_A] && left1) if (!(x1 <= 0)) x1 -= speed;
+        if (keysPressed[KeyEvent.VK_S] && down1) if (!(y1 >= 635)) y1 += speed;
         if (keysPressed[KeyEvent.VK_D] && right1) if (!(x1 >= 1305)) x1 += speed;
 
-        if (keysPressed[KeyEvent.VK_UP]) if (!(y2 <= 0)) y2 -= speed;
-        if (keysPressed[KeyEvent.VK_LEFT]) if (!(x2 <= 0)) x2 -= speed;
-        if (keysPressed[KeyEvent.VK_DOWN]) if (!(y2 >= 635)) y2 += speed;
+        if (keysPressed[KeyEvent.VK_UP] && up2) if (!(y2 <= 0)) y2 -= speed;
+        if (keysPressed[KeyEvent.VK_LEFT] && left2) if (!(x2 <= 0)) x2 -= speed;
+        if (keysPressed[KeyEvent.VK_DOWN] && down2) if (!(y2 >= 635)) y2 += speed;
         if (keysPressed[KeyEvent.VK_RIGHT] && right2) if (!(x2 >= 1305)) x2 += speed;
-
-        // for (Wall wall : walls){
-        //     int[] wallX = new int[wall.getWidth() + 49];
-        //     int[] wallY = new int[wall.getHeight() + 49];
-        //     for (int j = 0; j < wallX.length; j++) wallX[j] = j + wall.getX() - 49;
-        //     for (int j = 0; j < wallY.length; j++) wallY[j] = j + wall.getY() - 49;
-        //     for (int j = 0; j < wallX.length; j++){
-        //         for (int k = 0; k < wallY.length; k++){
-        //             if (wallX[j] == x1 && wallY[k] == y1){
-        //                 x1 = (int) (Math.random () * 1300);
-        //                 y1 = (int) (Math.random () * 635);
-        //             }
-        //             if (wallX[j] == x2 && wallY[k] == y2){
-        //                 x2 = (int) (Math.random () * 1300);
-        //                 y2 = (int) (Math.random () * 635);
-        //             }
-        //         }
-        //     }
-        // }
 
         if (boxes.size() > 0){
             for (int i = boxes.size()-1; i >= 0; i--){
