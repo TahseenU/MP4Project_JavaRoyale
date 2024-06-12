@@ -157,8 +157,8 @@ public class Game extends JPanel implements KeyListener{
         JButton start = new JButton ("PLAY");
         start.setForeground (Color.BLUE);
         start.setBounds (620, 350, 100, 30);
-        start.setBackground (Color.GRAY);
-        start.setFont (new Font ("Verdana", Font.BOLD, 16));
+        start.setContentAreaFilled (false);
+        start.setFont (new Font ("Verdana", Font.BOLD, 20));
         start.addActionListener (new ActionListener (){
             @Override
             public void actionPerformed (ActionEvent e){
@@ -170,8 +170,8 @@ public class Game extends JPanel implements KeyListener{
         JButton controls = new JButton ("HELP");
         controls.setForeground (Color.BLUE);
         controls.setBounds (620, 410, 100, 30);
-        controls.setBackground (Color.GRAY);
-        controls.setFont (new Font ("Verdana", Font.BOLD, 16));
+        controls.setContentAreaFilled (false);
+        controls.setFont (new Font ("Verdana", Font.BOLD, 20));
         controls.addActionListener (new ActionListener (){
             @Override
             public void actionPerformed (ActionEvent e){
@@ -456,260 +456,176 @@ public class Game extends JPanel implements KeyListener{
     }
 
     private void movePlayers() {
-        boolean right1 = true;
-        boolean right2 = true;
-        boolean left1 = true;
-        boolean left2 = true;
-        boolean down1 = true;
-        boolean down2 = true;
-        boolean up1 = true;
-        boolean up2 = true;
-        for (Wall w : walls){
-            right1 = checkRight (x1, y1, w);
-            if (!(right1)) break;
-        }
-        for (Wall w : walls){
-            right2 = checkRight (x2, y2, w);
-            if (!(right2)) break;
-        }
-        for (Wall w : walls){
-            left1 = checkLeft (x1, y1, w);
-            if (!(left1)) break;
-        }
-        for (Wall w : walls){
-            left2 = checkLeft (x2, y2, w);
-            if (!(left2)) break;
-        }
-        for (Wall w : walls){
-            down1 = checkDown (x1, y1, w);
-            if (!(down1)) break;
-        }
-        for (Wall w : walls){
-            down2 = checkDown (x2, y2, w);
-            if (!(down2)) break;
-        }
-        for (Wall w : walls){
-            up1 = checkUp (x1, y1, w);
-            if (!(up1)) break;
-        }
-        for (Wall w : walls){
-            up2 = checkUp (x2, y2, w);
-            if (!(up2)) break;
-        }
+        boolean[] directions1 = checkDirections(x1, y1);
+        boolean[] directions2 = checkDirections(x2, y2);
+        movePlayer1(directions1);
+        movePlayer2(directions2);
 
-        if (keysPressed[KeyEvent.VK_W] && up1) if (!(y1 <= 0)) y1 -= speed;
-        if (keysPressed[KeyEvent.VK_A] && left1) if (!(x1 <= 0)) x1 -= speed;
-        if (keysPressed[KeyEvent.VK_S] && down1) if (!(y1 >= 635)) y1 += speed;
-        if (keysPressed[KeyEvent.VK_D] && right1) if (!(x1 >= 1305)) x1 += speed;
+        checkBoxes();
+        checkBuffs();
+        checkArmors();
+    }
+    
+    private boolean[] checkDirections(int x, int y) {
+        boolean[] directions = {true, true, true, true};
+    
+        for (Wall w : walls) {
+            if (!checkRight(x, y, w)) directions[0] = false;
+            if (!checkLeft(x, y, w)) directions[1] = false;
+            if (!checkDown(x, y, w)) directions[2] = false;
+            if (!checkUp(x, y, w)) directions[3] = false;
+        }
+        return directions;
+    }
+    
+    private void movePlayer1(boolean[] directions) {
+        if (keysPressed[KeyEvent.VK_W] && directions[3] && y1 > 0) y1 -= speed;
+        if (keysPressed[KeyEvent.VK_A] && directions[1] && x1 > 0) x1 -= speed;
+        if (keysPressed[KeyEvent.VK_S] && directions[2] && y1 < 635) y1 += speed;
+        if (keysPressed[KeyEvent.VK_D] && directions[0] && x1 < 1305) x1 += speed;
+    }
+    
+    private void movePlayer2(boolean[] directions) {
+        if (keysPressed[KeyEvent.VK_UP] && directions[3] && y2 > 0) y2 -= speed;
+        if (keysPressed[KeyEvent.VK_LEFT] && directions[1] && x2 > 0) x2 -= speed;
+        if (keysPressed[KeyEvent.VK_DOWN] && directions[2] && y2 < 635) y2 += speed;
+        if (keysPressed[KeyEvent.VK_RIGHT] && directions[0] && x2 < 1305) x2 += speed;
+    }
+    
+    private void checkBoxes() {
+        for (int i = boxes.size() - 1; i >= 0; i--) checkCollisionWithBox(x1, y1, boxes.get(i), 40, true);
+        for (int i = boxes.size() - 1; i >= 0; i--) checkCollisionWithBox(x2, y2, boxes.get(i), 40, false);
 
-        if (keysPressed[KeyEvent.VK_UP] && up2) if (!(y2 <= 0)) y2 -= speed;
-        if (keysPressed[KeyEvent.VK_LEFT] && left2) if (!(x2 <= 0)) x2 -= speed;
-        if (keysPressed[KeyEvent.VK_DOWN] && down2) if (!(y2 >= 635)) y2 += speed;
-        if (keysPressed[KeyEvent.VK_RIGHT] && right2) if (!(x2 >= 1305)) x2 += speed;
-
-        if (boxes.size() > 0){
-            for (int i = boxes.size()-1; i >= 0; i--){
-                for (int j = x1 - 30; j < x1 + 50; j++){
-                    for (int k = y1 - 30; k < y1 + 50; k++){
-                        if (boxes.size() == 0) break;
-                        if (i == boxes.size()) break;
-                        if (j == boxes.get(i).getX() && k == boxes.get(i).getY()){
-                            p1Health += 40;
-                            p1Heals++;
-                            JLabel health = new JLabel ("+40 Health");
-                            health.setFont (new Font ("Verdana", Font.BOLD, 13));
-                            health.setBounds (x1, y1 - 40, 100, 20);
-                            health.setForeground (Color.ORANGE);
-                            Timer hTimer = new Timer (10, new ActionListener (){
-                                int appear = 0;
-                                @Override
-                                public void actionPerformed (ActionEvent e){
-                                    appear++;
-                                    if (appear == 50){
-                                        remove (health);
-                                        ((Timer) e.getSource ()).stop ();
-                                    }
-                                }
-                            });
-                            hTimer.start ();
-                            add (health);
-
-                            if (p1Health > 200) p1Health = 200;
-                            boxes.remove (i);
-                        }
+    }
+    
+    private void checkCollisionWithBox(int x, int y, HealthBox box, int healthGain, boolean isPlayer1) {
+        for (int j = x - 30; j < x + 50; j++) {
+            for (int k = y - 30; k < y + 50; k++) {
+                if (j == box.getX() && k == box.getY()) {
+                    if (isPlayer1) {
+                        p1Health = Math.min(p1Health + healthGain, 200);
+                        p1Heals++;
+                    } else {
+                        p2Health = Math.min(p2Health + healthGain, 200);
+                        p2Heals++;
                     }
+                    displayHealthMessage(x, y, healthGain);
+                    boxes.remove(box);
+                    return;
                 }
             }
-
-            for (int i = boxes.size()-1; i >= 0; i--){
-                for (int j = x2 - 30; j < x2 + 50; j++){
-                    for (int k = y2 - 30; k < y2 + 50; k++){
-                        if (boxes.size() == 0) break;
-                        if (i == boxes.size()) break;
-                        if (j == boxes.get(i).getX() && k == boxes.get(i).getY()){
-                            p2Health += 40;
-                            p2Heals++;
-                            JLabel health = new JLabel ("+40 Health");
-                            health.setFont (new Font ("Verdana", Font.BOLD, 13));
-                            health.setBounds (x2, y2 - 40, 100, 20);
-                            health.setForeground (Color.ORANGE);
-                            Timer hTimer = new Timer (10, new ActionListener (){
-                                int appear = 0;
-                                @Override
-                                public void actionPerformed (ActionEvent e){
-                                    appear++;
-                                    if (appear == 50){
-                                        remove (health);
-                                        ((Timer) e.getSource ()).stop ();
-                                    }
-                                }
-                            });
-                            hTimer.start ();
-                            add (health);
-
-                            if (p2Health > 200) p2Health = 200;
-                            boxes.remove (i);
-                        }
-                    }
-                }
-            }
-        }
-
-        if (buffs.size() > 0){
-            for (int i = buffs.size()-1; i >= 0; i--){
-                for (int j = x1 - 25; j < x1 + 50; j++){
-                    for (int k = y1 - 25; k < y1 + 50; k++){
-                        if (buffs.size() == 0) break;
-                        if (i == buffs.size()) break;
-                        if (j == buffs.get(i).getX() && k == buffs.get(i).getY()){
-                            int add = 1;
-                            if (Math.random () >= 2 / 3.0) add = 3;
-                            else if (Math.random () >= 2 / 3.0) add = 2;
-                            p1Attack += add;
-                            p1Buffs++;
-                            buffs.remove (i);
-                            JLabel dmg = new JLabel ("+" + add + " Attack");
-                            dmg.setFont (new Font ("Verdana", Font.BOLD, 13));
-                            dmg.setBounds (x1, y1 - 40, 100, 20);
-                            dmg.setForeground (Color.ORANGE);
-                            Timer dTimer = new Timer (10, new ActionListener (){
-                                int appear = 0;
-                                @Override
-                                public void actionPerformed (ActionEvent e){
-                                    appear++;
-                                    if (appear == 50){
-                                        remove (dmg);
-                                        ((Timer) e.getSource ()).stop ();
-                                    }
-                                }
-                            });
-                            dTimer.start ();
-                            add (dmg);
-                        }
-                    }
-                }
-            }
-
-            for (int i = buffs.size()-1; i >= 0; i--){
-                for (int j = x2 - 25; j < x2 + 50; j++){
-                    for (int k = y2 - 25; k < y2 + 50; k++){
-                        if (buffs.size() == 0) break;
-                        if (i == buffs.size()) break;
-                        if (j == buffs.get(i).getX() && k == buffs.get(i).getY()){
-                            int add = 1;
-                            if (Math.random () >= 2 / 3.0) add = 3;
-                            else if (Math.random () >= 2 / 3.0) add = 2;
-                            p2Attack += add;
-                            p2Buffs++;
-                            buffs.remove (i);
-                            JLabel dmg = new JLabel ("+" + add + " Attack");
-                            dmg.setFont (new Font ("Verdana", Font.BOLD, 13));
-                            dmg.setBounds (x2, y2 - 40, 100, 20);
-                            dmg.setForeground (Color.ORANGE);
-                            Timer dTimer = new Timer (10, new ActionListener (){
-                                int appear = 0;
-                                @Override
-                                public void actionPerformed (ActionEvent e){
-                                    appear++;
-                                    if (appear == 50){
-                                        remove (dmg);
-                                        ((Timer) e.getSource ()).stop ();
-                                    }
-                                }
-                            });
-                            dTimer.start ();
-                            add (dmg);
-                        }
-                    }
-                }
-            }
-        }
-
-        if (armors.size() > 0){
-            for (int i = armors.size()-1; i >= 0; i--){
-                for (int j = x1 - 30; j < x1 + 50; j++){
-                    for (int k = y1 - 30; k < y1 + 50; k++){
-                        if (armors.size() == 0) break;
-                        if (i == armors.size()) break;
-                        if (j == armors.get(i).getX() && k == armors.get(i).getY()){
-                            p1Defense++;
-                            p1Shields++;
-                            armors.remove (i);
-                            JLabel def = new JLabel ("+ 1 Defense");
-                            def.setFont (new Font ("Verdana", Font.BOLD, 13));
-                            def.setBounds (x1, y1 - 40, 100, 20);
-                            def.setForeground (Color.ORANGE);
-                            Timer dTimer = new Timer (10, new ActionListener (){
-                                int appear = 0;
-                                @Override
-                                public void actionPerformed (ActionEvent e){
-                                    appear++;
-                                    if (appear == 50){
-                                        remove (def);
-                                        ((Timer) e.getSource ()).stop ();
-                                    }
-                                }
-                            });
-                            dTimer.start ();
-                            add (def);
-                        }
-                    }
-                }
-            }
-
-            for (int i = armors.size()-1; i >= 0; i--){
-                for (int j = x2 - 30; j < x2 + 50; j++){
-                    for (int k = y2 - 30; k < y2 + 50; k++){
-                        if (armors.size() == 0) break;
-                        if (i == armors.size()) break;
-                        if (j == armors.get(i).getX() && k == armors.get(i).getY()){
-                            p2Defense++;
-                            p2Shields++;
-                            armors.remove (i);
-                            JLabel def = new JLabel ("+ 1 Defense");
-                            def.setFont (new Font ("Verdana", Font.BOLD, 13));
-                            def.setBounds (x2, y2 - 40, 100, 20);
-                            def.setForeground (Color.ORANGE);
-                            Timer dTimer = new Timer (10, new ActionListener (){
-                                int appear = 0;
-                                @Override
-                                public void actionPerformed (ActionEvent e){
-                                    appear++;
-                                    if (appear == 50){
-                                        remove (def);
-                                        ((Timer) e.getSource ()).stop ();
-                                    }
-                                }
-                            });
-                            dTimer.start ();
-                            add (def);
-                        }
-                    }
-                }
-            }
-            
         }
     }
+    
+    private void displayHealthMessage(int x, int y, int healthGain) {
+        JLabel health = new JLabel("+" + healthGain + " Health");
+        health.setFont(new Font("Verdana", Font.BOLD, 13));
+        health.setBounds(x, y - 40, 100, 20);
+        health.setForeground(Color.ORANGE);
+        Timer hTimer = new Timer(10, new ActionListener() {
+            int appear = 0;
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                appear++;
+                if (appear == 50) {
+                    remove(health);
+                    ((Timer) e.getSource()).stop();
+                }
+            }
+        });
+        hTimer.start();
+        add(health);
+    }
+    
+    private void checkBuffs() {
+        for (int i = buffs.size() - 1; i >= 0; i--) checkCollisionWithBuff(x1, y1, buffs.get(i), true);
+        for (int i = buffs.size() - 1; i >= 0; i--) checkCollisionWithBuff(x2, y2, buffs.get(i), false);
+    }
+    
+    private void checkCollisionWithBuff(int x, int y, Buff buff, boolean isPlayer1) {
+        for (int j = x - 25; j < x + 50; j++) {
+            for (int k = y - 25; k < y + 50; k++) {
+                if (j == buff.getX() && k == buff.getY()) {
+                    int add = (Math.random() >= 2 / 3.0) ? 3 : ((Math.random() >= 2 / 3.0) ? 2 : 1);
+                    if (isPlayer1) {
+                        p1Attack += add;
+                        p1Buffs++;
+                    } else {
+                        p2Attack += add;
+                        p2Buffs++;
+                    }
+                    displayBuffMessage(x, y, add);
+                    buffs.remove(buff);
+                    return;
+                }
+            }
+        }
+    }
+    
+    private void displayBuffMessage(int x, int y, int add) {
+        JLabel dmg = new JLabel("+" + add + " Attack");
+        dmg.setFont(new Font("Verdana", Font.BOLD, 13));
+        dmg.setBounds(x, y - 40, 100, 20);
+        dmg.setForeground(Color.ORANGE);
+        Timer dTimer = new Timer(10, new ActionListener() {
+            int appear = 0;
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                appear++;
+                if (appear == 50) {
+                    remove(dmg);
+                    ((Timer) e.getSource()).stop();
+                }
+            }
+        });
+        dTimer.start();
+        add(dmg);
+    }
+    
+    private void checkArmors() {
+        for (int i = armors.size() - 1; i >= 0; i--) checkCollisionWithArmor(x1, y1, armors.get(i), true);
+        for (int i = armors.size() - 1; i >= 0; i--) checkCollisionWithArmor(x2, y2, armors.get(i), false);
+    }
+    
+    private void checkCollisionWithArmor(int x, int y, Armor armor, boolean isPlayer1) {
+        for (int j = x - 30; j < x + 50; j++) {
+            for (int k = y - 30; k < y + 50; k++) {
+                if (j == armor.getX() && k == armor.getY()) {
+                    if (isPlayer1) {
+                        p1Defense++;
+                        p1Shields++;
+                    } else {
+                        p2Defense++;
+                        p2Shields++;
+                    }
+                    displayArmorMessage(x, y);
+                    armors.remove(armor);
+                    return;
+                }
+            }
+        }
+    }
+    
+    private void displayArmorMessage(int x, int y) {
+        JLabel def = new JLabel("+1 Defense");
+        def.setFont(new Font("Verdana", Font.BOLD, 13));
+        def.setBounds(x, y - 40, 100, 20);
+        def.setForeground(Color.ORANGE);
+        Timer dTimer = new Timer(10, new ActionListener() {
+            int appear = 0;
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                appear++;
+                if (appear == 50) {
+                    remove(def);
+                    ((Timer) e.getSource()).stop();
+                }
+            }
+        });
+        dTimer.start();
+        add(def);
+    }
+    
 
     private void hitBox (int[] arr, int var, int r){
         if (r < 56){
@@ -921,7 +837,7 @@ public class Game extends JPanel implements KeyListener{
             }
             for (Armor shield : armors){
                 ImageIcon chestplate = new ImageIcon ("C:/Users/utahs/OneDrive/Pictures/Saved Pictures/Chestplate.jpg");
-                g.drawImage (chestplate.getImage(), shield.getX(), shield.getY(), 30, 30, null);
+                g.drawImage (chestplate.getImage(), shield.getX(), shield.getY(), 40, 40, null);
             }
             g2d.dispose ();
         }
